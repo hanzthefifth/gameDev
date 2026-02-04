@@ -1,0 +1,19 @@
+# Unity generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]serSettings/
+
+
+# Unity lighting (HUGE, auto-generated)
+**/LightingData.asset
+**/Lightmap-*.exr
+
+
+# IDEs
+.vs/
+.vscode/
+.idea/

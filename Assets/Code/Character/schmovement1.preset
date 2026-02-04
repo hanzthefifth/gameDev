@@ -1,0 +1,164 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: schmovement1
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: 1ba9a63e484e8f142b3b13cfd976e290, type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: speedWalking
+    value: 4.7
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: speedRunning
+    value: 6.5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: maxAirSpeed
+    value: 11
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: backwardSpeedMultiplier
+    value: 0.702
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: strafeSpeedMultiplier
+    value: 0.915
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: jumpHeight
+    value: 1.15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: baseGravityMultiplier
+    value: 2.86
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: fallGravityMultiplier
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: sprintJumpHorizontalBoost
+    value: 2.66
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: longJumpMinHorizontalSpeed
+    value: 5.6
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: firstSprintJumpBoost
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: chainedJumpDecayWalk
+    value: 0.9
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: chainedJumpDecaySprint
+    value: 0.97
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: jumpChainResetTime
+    value: 0.15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: walkJumpLockoutTime
+    value: 0.35
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: sprintJumpLockoutTime
+    value: 0.15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: landingAccelPenaltyTime
+    value: 0.25
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: groundAcceleration
+    value: 9
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: airAcceleration
+    value: 2.41
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: groundFriction
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: directionChangePenalty
+    value: 0.29
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: maxStamina
+    value: 200
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: staminaRegenPerSecond
+    value: 40
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: sprintStaminaDrainPerSecond
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: jumpStaminaCost
+    value: 20
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: lowStaminaJumpMultiplier
+    value: 0.6
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: sprintMinStaminaToStart
+    value: 30
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: sprintMinStaminaToContinue
+    value: 5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: maxStandableSlope
+    value: 45
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: groundCheckDistance
+    value: 0.1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: groundLayerMask.m_Bits
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: audioClipWalking
+    value: 
+    objectReference: {fileID: 8300000, guid: 74abbbf1b1724e34b894191db38e10a0, type: 3}
+  - target: {fileID: 0}
+    propertyPath: audioClipRunning
+    value: 
+    objectReference: {fileID: 8300000, guid: d2add02f58e61e640aba3ae9110591cb, type: 3}
+  m_ExcludedProperties: []
+  m_CoupledType:
+    m_NativeTypeID: 0
+    m_ManagedTypePPtr: {fileID: 0}
+    m_ManagedTypeFallback: 
+  m_CoupledProperties: []
