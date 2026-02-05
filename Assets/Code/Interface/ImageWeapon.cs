@@ -3,7 +3,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.LowPolyShooterPack.Interface
+namespace Game.Interface
 {
     /// <summary>
     /// Weapon Image. Handles assigning the proper sprites to the weapon images.

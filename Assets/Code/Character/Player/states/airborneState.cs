@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// <summary>
     /// Handles locomotion when the character is in the air (jumping/falling).

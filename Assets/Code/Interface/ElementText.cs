@@ -3,7 +3,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack.Interface
+namespace Game.Interface
 {
     /// <summary>
     /// Text Interface Element.

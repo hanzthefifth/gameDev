@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// <summary>
     /// Weapon Attachment Manager. Handles equipping and storing a Weapon's Attachments.

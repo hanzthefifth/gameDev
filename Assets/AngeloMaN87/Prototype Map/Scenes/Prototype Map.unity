@@ -171,6 +171,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerController
       objectReference: {fileID: 0}
+    - target: {fileID: 5299513316358161717, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8395453314893469205, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: regenEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8395453314893469205, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: regenPerSecond
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3365622047257778752, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
     - {fileID: -4203135237391944297, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
@@ -327,6 +339,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3142433853174924809, guid: 14123013602fb99489753446132abd37, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6570682861075086130, guid: 14123013602fb99489753446132abd37, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -334,7 +350,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 14123013602fb99489753446132abd37, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1600869349}
+    - targetCorrespondingSourceObject: {fileID: 3142433853174924809, guid: 14123013602fb99489753446132abd37, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1920973755}
   m_SourcePrefab: {fileID: 100100000, guid: 14123013602fb99489753446132abd37, type: 3}
 --- !u!1 &1402826443
 GameObject:
@@ -659,6 +681,53 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DebugDamageTester
   playerHealth: {fileID: 436855919}
   damageAmount: 10
+--- !u!1 &1600869342 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 14123013602fb99489753446132abd37, type: 3}
+  m_PrefabInstance: {fileID: 871198058}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1600869349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600869342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52035696403658443b926c937acddf03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 100
+  destroyDelay: 3
+  deathEffectPrefab: {fileID: 0}
+--- !u!1 &1920973752 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3142433853174924809, guid: 14123013602fb99489753446132abd37, type: 3}
+  m_PrefabInstance: {fileID: 871198058}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1920973755
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920973752}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4024603752885881368, guid: edff4e7f258fc564480a747bd0bdb310, type: 3}
 --- !u!1001 &8354416668599502667
 PrefabInstance:
   m_ObjectHideFlags: 0

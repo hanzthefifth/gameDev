@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// <summary>
     /// Weapon Scope.

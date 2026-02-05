@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack.Interface
+namespace Game.Interface
 {
     /// <summary>
     /// Crosshair.

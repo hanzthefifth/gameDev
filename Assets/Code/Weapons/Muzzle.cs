@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// <summary>
     /// Muzzle.

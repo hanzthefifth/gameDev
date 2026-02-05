@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// <summary>
     /// Helper StateMachineBehaviour that allows us to more easily play a specific weapon sound.

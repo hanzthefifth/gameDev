@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     public abstract class WeaponBehaviour : MonoBehaviour
     {

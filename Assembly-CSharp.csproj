@@ -66,9 +66,11 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
     <Compile Include="Assets\Code\Character\Player\CharacterKinematics.cs" />
     <Compile Include="Assets\Code\Character\Player\Inventory.cs" />
+    <Compile Include="Assets\FieldProbe.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
     <Compile Include="Assets\Code\Interface\TextAmmunitionCurrent.cs" />
     <Compile Include="Assets\Code\Interface\ImageWeapon.cs" />
+    <Compile Include="Assets\Code\Tools\Looping\Loops.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
     <Compile Include="Assets\Code\Weapons\Scope.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
+    <Compile Include="Assets\Code\Tools\Looping\LoopUtilities.cs" />
     <Compile Include="Assets\Code\Weapons\Weapon.cs" />
     <Compile Include="Assets\Code\Character\Player\PlayerHealth.cs" />
     <Compile Include="Assets\Code\Services\IGameService.cs" />
@@ -86,8 +89,8 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ChatController.cs" />
-    <Compile Include="Assets\Infima Games\Low Poly Shooter Pack - Free Sample\Tools\Looping\LoopUtilities.cs" />
     <Compile Include="Assets\Code\Character\Player\states\groundedState.cs" />
+    <Compile Include="Assets\Code\Tools\Looping\Log.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
     <Compile Include="Assets\Code\Interface\HealthUI.cs" />
     <Compile Include="Assets\Code\Character\Player\DebugDamageTester.cs" />
@@ -95,6 +98,7 @@
     <Compile Include="Assets\Code\Interface\TextMouseLock.cs" />
     <Compile Include="Assets\Code\Legacy\ExplosionScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
+    <Compile Include="Assets\Code\Character\Combat\IDamageable.cs" />
     <Compile Include="Assets\Code\Weapons\MagazineBehaviour.cs" />
     <Compile Include="Assets\Code\Animation\PlaySoundCharacterBehaviour.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
@@ -102,9 +106,9 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\Code\Legacy\DebrisScript.cs" />
     <Compile Include="Assets\Code\Interface\TextTimescale.cs" />
+    <Compile Include="Assets\Code\Character\Combat\damageType.cs" />
     <Compile Include="Assets\Code\Legacy\ExplosiveBarrelScript.cs" />
     <Compile Include="Assets\Code\Animation\PlaySoundBehaviour.cs" />
-    <Compile Include="Assets\Infima Games\Low Poly Shooter Pack - Free Sample\Tools\Looping\Loops.cs" />
     <Compile Include="Assets\Code\Services\Bootstraper.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
     <Compile Include="Assets\Code\Services\IAudioManagerService.cs" />
@@ -117,6 +121,7 @@
     <Compile Include="Assets\Code\Services\AudioManagerService.cs" />
     <Compile Include="Assets\Code\Weapons\Magazine.cs" />
     <Compile Include="Assets\Code\Weapons\WeaponBehaviour.cs" />
+    <Compile Include="Assets\Code\Character\Combat\EnemyHealth.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\Code\Weapons\ScopeBehaviour.cs" />
@@ -132,6 +137,7 @@
     <Compile Include="Assets\Code\Character\Player\Character.cs" />
     <Compile Include="Assets\Code\Weapons\MuzzleBehaviour.cs" />
     <Compile Include="Assets\Code\Services\AudioSettings.cs" />
+    <Compile Include="Assets\Code\Tools\Looping\RLoops.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\Code\Character\Player\Movement.cs" />
     <Compile Include="Assets\Code\Animation\WeaponAnimationEventHandler.cs" />
@@ -160,12 +166,11 @@
     <Compile Include="Assets\Code\Character\Player\MovementBehaviour.cs" />
     <Compile Include="Assets\Code\Weapons\UtilitiesWeapons.cs" />
     <Compile Include="Assets\Code\Legacy\GasTankScript.cs" />
+    <Compile Include="Assets\Code\Weapons\WeaponConfig.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Code\Animation\AnimationReceiver.cs" />
     <Compile Include="Assets\Code\Legacy\CasingScript.cs" />
     <Compile Include="Assets\Code\Services\ServiceLocator.cs" />
-    <Compile Include="Assets\Infima Games\Low Poly Shooter Pack - Free Sample\Tools\Looping\RLoops.cs" />
-    <Compile Include="Assets\Infima Games\Low Poly Shooter Pack - Free Sample\Tools\Log.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Infima Games\Low Poly Shooter Pack - Free Sample\Art\TextMesh Pro\Resources\Shaders\TMPro.cginc" />

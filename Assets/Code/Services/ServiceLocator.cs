@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// Simple service locator for <see cref="IGameService"/> instances.
     public class ServiceLocator

@@ -31,7 +31,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void Update()
     {
-        if (!regenEnabled || IsDead) return;
+        if (!regenEnabled || IsDead) return; //dont regen if dead
 
         // Simple delayed regen
         if (Time.time - _lastDamageTime >= regenDelay && CurrentHealth < maxHealth)

@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack.Interface
+namespace Game.Interface
 {
     /// <summary>
     /// Component that changes a text to match the current time scale.

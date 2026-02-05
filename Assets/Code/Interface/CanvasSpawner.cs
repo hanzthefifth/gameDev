@@ -1,12 +1,8 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿using UnityEngine;
 
-using UnityEngine;
-
-namespace Game.LowPolyShooterPack.Interface
+namespace Game.Interface
 {
-    /// <summary>
-    /// Player Interface.
-    /// </summary>
+    /// Player UI.
     public class CanvasSpawner : MonoBehaviour
     {
         #region FIELDS SERIALIZED
@@ -21,9 +17,7 @@ namespace Game.LowPolyShooterPack.Interface
 
         #region UNITY FUNCTIONS
 
-        /// <summary>
         /// Awake.
-        /// </summary>
         private void Awake()
         {
             //Spawn Interface.

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// <summary>
     /// Play Sound Behaviour. Plays an AudioClip using our custom AudioManager!
@@ -22,7 +22,7 @@ namespace Game.LowPolyShooterPack
         private AudioSettings settings = new AudioSettings(1.0f, 0.0f, true);
 
         /// <summary>
-        /// Audio Manager Service. Handles all game audio.
+        /// Audio Manager Service. Handles all Game audio.
         /// </summary>
         private IAudioManagerService audioManagerService;
 

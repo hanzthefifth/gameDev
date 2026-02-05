@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// <summary>
     /// Handles all the Inverse Kinematics needed for our Character.

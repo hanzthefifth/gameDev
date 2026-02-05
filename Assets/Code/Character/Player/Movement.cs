@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
 
 internal interface IMotionState

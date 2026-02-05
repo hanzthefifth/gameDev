@@ -12,9 +12,10 @@ public class HumanoidEnemyAI : MonoBehaviour
         Chase,
         Attack
     }
+
     [Header("References")]
     [SerializeField] private Transform player;
-    [SerializeField] private Animator animator; 
+    [SerializeField] private Animator animator;
     [SerializeField] private NavMeshAgent agent;
 
     [Header("Perception")]
@@ -42,6 +43,8 @@ public class HumanoidEnemyAI : MonoBehaviour
     private float patrolWaitTimer;
     private float lastSeenTime;
     private float nextAttackTime;
+    private IDamageable playerDamageable;
+    private EnemyHealth enemyHealth;
 
     private void Awake()
     {
@@ -57,19 +60,30 @@ public class HumanoidEnemyAI : MonoBehaviour
 
         if (player == null)
         {
-            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-            if (playerObject != null)
-            {
-                player = playerObject.transform;
-            }
+            ResolvePlayerReference();
+        }
+        else
+        {
+            CachePlayerDamageable();
         }
 
         agent.stoppingDistance = stoppingDistance;
         lastKnownPosition = transform.position;
+        enemyHealth = GetComponent<EnemyHealth>();
     }
 
     private void Update()
     {
+        if (enemyHealth != null && enemyHealth.IsDead)
+        {
+            return;
+        }
+
+        if (player == null)
+        {
+            ResolvePlayerReference();
+        }
+
         bool canSeePlayer = player != null && CanSeePlayer();
 
         if (canSeePlayer)
@@ -116,7 +130,6 @@ public class HumanoidEnemyAI : MonoBehaviour
 
         UpdateAnimator();
     }
-
 
     private void HandleIdle()
     {
@@ -197,8 +210,51 @@ public class HumanoidEnemyAI : MonoBehaviour
         if (Time.time >= nextAttackTime)
         {
             nextAttackTime = Time.time + attackCooldown;
-            player.SendMessage("TakeDamage", attackDamage, SendMessageOptions.DontRequireReceiver);
+            TryApplyDamage();
         }
+    }
+
+    private void ResolvePlayerReference()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject == null)
+        {
+            return;
+        }
+
+        player = playerObject.transform;
+        CachePlayerDamageable();
+    }
+
+    private void CachePlayerDamageable()
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        playerDamageable = player.GetComponentInParent<IDamageable>();
+    }
+
+    private void TryApplyDamage()
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        if (playerDamageable == null)
+        {
+            CachePlayerDamageable();
+        }
+
+        if (playerDamageable != null)
+        {
+            playerDamageable.TakeDamage(attackDamage);
+            return;
+        }
+
+        player.SendMessage("TakeDamage", attackDamage, SendMessageOptions.DontRequireReceiver);
     }
 
     private bool CanSeePlayer()
@@ -267,10 +323,10 @@ public class HumanoidEnemyAI : MonoBehaviour
         {
             return;
         }
-        animator.SetFloat("Speed", agent.velocity.magnitude);
-        //animator.SetBool("IsAttacking", state == EnemyState.Attack); //for later
-    }
 
+        animator.SetFloat("Speed", agent.velocity.magnitude);
+        animator.SetBool("IsAttacking", state == EnemyState.Attack);
+    }
 
     private void OnDrawGizmosSelected()
     {

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     public sealed class Character : CharacterBehaviour
     {

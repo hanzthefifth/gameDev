@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35c7517c818607449a7e3740643337d5, type: 3}
+  m_Name: AssualtRifleConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Game.LowPolyShooterPack.WeaponConfig
+  weaponId: 1
+  displayName: AssualtRifle
+  baseDamage: 20
+  damageType: 0
+  impactForce: 30
+  maxDistance: 500

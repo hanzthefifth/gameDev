@@ -1,7 +1,7 @@
 ﻿﻿using System;
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     public static class Log
     {

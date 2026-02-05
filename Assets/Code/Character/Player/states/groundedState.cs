@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// Handles locomotion when the character is on the ground.
     /// Manages ground friction, acceleration, and landing penalties.

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     public class StaminaUI : MonoBehaviour
     {

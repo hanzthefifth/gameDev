@@ -3,7 +3,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.LowPolyShooterPack
+namespace Game
 {
     /// <summary>
     /// Time Manager.

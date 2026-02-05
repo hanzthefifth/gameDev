@@ -8,6 +8,7 @@ public class HealthUI : MonoBehaviour
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private Image healthFillImage;       // radial/linear bar (set Fill Type to Filled)
     [SerializeField] private TMP_Text healthText;         // optional "100 / 100" text
+    [SerializeField] private Slider healthSlider;
 
     private void Reset()
     {
@@ -59,7 +60,13 @@ public class HealthUI : MonoBehaviour
             healthFillImage.fillAmount = normalized;
             Debug.Log($"[HealthUI] Fill amount updated: {normalized:F2}");
         }
+         if (healthSlider != null)
+        {
+            healthSlider.value = normalized;
+            Debug.Log($"[HealthUI] Slider value updated: {normalized:F2}");
+        }
     }
+
 
     private void HandleHealthChanged(float current, float max)
     {

@@ -2,7 +2,7 @@
 
 using System.Globalization;
 
-namespace Game.LowPolyShooterPack.Interface
+namespace Game.Interface
 {
     /// <summary>
     /// Total Ammunition Text.

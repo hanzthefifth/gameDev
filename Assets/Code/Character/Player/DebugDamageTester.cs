@@ -26,7 +26,6 @@ public class DebugDamageTester : MonoBehaviour
                 return;
             }
         }
-        
         Debug.Log($"[DebugDamageTester] Ready! Press N to damage ({damageAmount}), M to heal ({damageAmount})");
         Debug.Log($"[DebugDamageTester] Current Health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
     }
@@ -50,7 +49,7 @@ public class DebugDamageTester : MonoBehaviour
         }
         
         // Bonus: K to kill, R to reset
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             Debug.Log("[DebugDamageTester] Killing player...");
             playerHealth.Kill();
