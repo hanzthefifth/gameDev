@@ -11,14 +11,93 @@ namespace EnemyAI.Complete{
         [System.Serializable]
         public class ThreatInfo
         {
+            [System.Serializable]
+            public struct PositionSample
+            {
+                public Vector3 position;
+                public float timestamp;
+
+                public PositionSample(Vector3 position, float timestamp)
+                {
+                    this.position = position;
+                    this.timestamp = timestamp;
+                }
+            }
+
             public Transform target;
             public Vector3 lastSeenPosition;
             public float confidence;        // 0-1, decays over time
             public float lastUpdateTime;
             public bool hasVisualContact;
+            public Vector3 estimatedVelocity;
+
+            private readonly List<PositionSample> positionSamples = new List<PositionSample>();
+            private int maxSamples = 6;
+            private float predictionLookAheadTime = 0.35f;
             
             public float ConfidenceNow => 
                 Mathf.Max(0, confidence - (Time.time - lastUpdateTime) * 0.15f);
+
+            public Vector3 predictedPosition =>
+                lastSeenPosition + estimatedVelocity * predictionLookAheadTime;
+
+            public void ConfigurePrediction(float lookAheadTime, int maxSampleCount)
+            {
+                predictionLookAheadTime = Mathf.Max(0f, lookAheadTime);
+                maxSamples = Mathf.Max(2, maxSampleCount);
+
+                while (positionSamples.Count > maxSamples)
+                {
+                    positionSamples.RemoveAt(0);
+                }
+            }
+
+            public void AddPositionSample(Vector3 samplePosition, float sampleTime)
+            {
+                positionSamples.Add(new PositionSample(samplePosition, sampleTime));
+
+                while (positionSamples.Count > maxSamples)
+                {
+                    positionSamples.RemoveAt(0);
+                }
+
+                estimatedVelocity = ComputeSmoothedVelocity();
+            }
+
+            private Vector3 ComputeSmoothedVelocity()
+            {
+                if (positionSamples.Count < 2)
+                {
+                    return Vector3.zero;
+                }
+
+                Vector3 velocitySum = Vector3.zero;
+                float totalWeight = 0f;
+
+                for (int i = 1; i < positionSamples.Count; i++)
+                {
+                    PositionSample previous = positionSamples[i - 1];
+                    PositionSample current = positionSamples[i];
+                    float dt = current.timestamp - previous.timestamp;
+
+                    if (dt <= Mathf.Epsilon)
+                    {
+                        continue;
+                    }
+
+                    Vector3 segmentVelocity = (current.position - previous.position) / dt;
+                    float weight = i; // Heavier weighting on recent movement
+                    velocitySum += segmentVelocity * weight;
+                    totalWeight += weight;
+                }
+
+                if (totalWeight <= Mathf.Epsilon)
+                {
+                    return Vector3.zero;
+                }
+
+                return velocitySum / totalWeight;
+            }
         }
         
         [Header("Detection Settings")]
@@ -27,6 +106,8 @@ namespace EnemyAI.Complete{
         [SerializeField] private float hearingRange = 15f;
         [SerializeField] private LayerMask targetLayer = 1 << 6; // Player layer
         [SerializeField] private LayerMask obstacleLayer = 1 << 0; // Default layer
+        [SerializeField, Min(2)] private int positionSampleBufferSize = 6;
+        [SerializeField, Min(0f)] private float threatPredictionLookAheadTime = 0.35f;
         
         [Header("Alertness")]
         public float alertness = 0f;  // 0 = calm, 1 = full combat
@@ -105,8 +186,12 @@ namespace EnemyAI.Complete{
                     lastSeenPosition = position,
                     confidence = confidence,
                     lastUpdateTime = Time.time,
-                    hasVisualContact = visual
+                    hasVisualContact = visual,
+                    estimatedVelocity = Vector3.zero
                 };
+
+                threats[target].ConfigurePrediction(threatPredictionLookAheadTime, positionSampleBufferSize);
+                threats[target].AddPositionSample(position, Time.time);
             }
             else
             {
@@ -115,6 +200,8 @@ namespace EnemyAI.Complete{
                 info.confidence = Mathf.Min(1f, info.confidence + confidence);
                 info.lastUpdateTime = Time.time;
                 info.hasVisualContact = visual;
+                info.ConfigurePrediction(threatPredictionLookAheadTime, positionSampleBufferSize);
+                info.AddPositionSample(position, Time.time);
             }
         }
         

@@ -17,6 +17,7 @@ namespace EnemyAI.Complete{
         [SerializeField] private float preferredDistance = 12f;
         [SerializeField] private int sampleCount = 12;
         [SerializeField] private float sampleRadius = 6f;
+        [SerializeField, Range(0f, 1f)] private float predictionConfidenceThreshold = 0.7f;
         
         private float nextRepositionTime;
         private float repositionInterval = 3f;
@@ -48,6 +49,8 @@ namespace EnemyAI.Complete{
                 transform.position, 
                 threat.target.position
             );
+
+            Vector3 facingPosition = GetThreatFacingPosition(threat);
             
             // Check if we need to reposition
             bool needsReposition = 
@@ -63,7 +66,7 @@ namespace EnemyAI.Complete{
             {
                 // Hold position and face target
                 agent.isStopped = true;
-                FaceTarget(threat.target.position);
+                FaceTarget(facingPosition);
             }
         }
         
@@ -104,6 +107,20 @@ namespace EnemyAI.Complete{
                 agent.isStopped = false;
                 agent.SetDestination(bestPosition);
             }
+        }
+
+        private Vector3 GetThreatFacingPosition(PerceptionSystem.ThreatInfo threat)
+        {
+            bool hasReliablePrediction =
+                threat.ConfidenceNow >= predictionConfidenceThreshold &&
+                threat.estimatedVelocity.sqrMagnitude > 0.01f;
+
+            if (hasReliablePrediction)
+            {
+                return threat.predictedPosition;
+            }
+
+            return threat.target != null ? threat.target.position : threat.lastSeenPosition;
         }
         
         private float ScorePosition(Vector3 position, Vector3 targetPosition)

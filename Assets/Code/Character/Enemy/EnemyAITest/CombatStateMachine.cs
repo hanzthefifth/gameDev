@@ -206,7 +206,7 @@ public class CombatStateMachine : MonoBehaviour
                 }
                 else
                 {
-                    weapon.EngageTarget(perception.CurrentThreat.target);
+                    weapon.EngageTarget(perception.CurrentThreat);
                 }
             }
             
@@ -217,7 +217,7 @@ public class CombatStateMachine : MonoBehaviour
             
             if (weapon != null && perception.CurrentThreat?.hasVisualContact == true)
             {
-                weapon.EngageTarget(perception.CurrentThreat.target);
+                weapon.EngageTarget(perception.CurrentThreat);
             }
         }
         

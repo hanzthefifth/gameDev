@@ -10,6 +10,12 @@ namespace EnemyAI.Complete
         [SerializeField] private float damage = 10f;
         [SerializeField] private float range = 25f;
         [SerializeField] private float baseAccuracy = 2f; // degrees of spread
+        [SerializeField] private bool usePredictiveAim = true;
+        [SerializeField, Range(0f, 1f)] private float predictionConfidenceThreshold = 0.65f;
+        [SerializeField, Min(0f)] private float lateralVelocityThreshold = 0.75f;
+        [SerializeField, Min(0f)] private float maxLeadDistance = 4f;
+        [SerializeField, Min(0f)] private float closeRangeLeadClampDistance = 8f;
+        [SerializeField, Min(0f)] private float closeRangeMaxLead = 1.25f;
         [Header("Melee Attack")]
         [SerializeField] private bool hasMeleeAttack = true;
         [SerializeField] private float meleeRange = 2.2f;
@@ -69,16 +75,21 @@ namespace EnemyAI.Complete
         }
 
 
-        public void EngageTarget(Transform target)
+        public void EngageTarget(PerceptionSystem.ThreatInfo threat)
         {
             if (Time.time < nextFireTime)
                 return;
+
+            if (threat == null)
+                return;
+
+            Transform target = threat.target;
 
             if (target == null)
                 return;
 
             Debug.Log($"[WeaponSystem] EngageTarget: target={target.name}, root={target.root.name}, pos={target.position}");
-            Vector3 targetPos = target.position + Vector3.up * 1.0f;
+            Vector3 targetPos = GetAimPoint(threat);
             // NEW: Check if we have clear shot
             // ✅ Pass both target and targetPos
             if (!HasClearShot(target, targetPos))
@@ -88,6 +99,41 @@ namespace EnemyAI.Complete
             }
             Fire(targetPos);
             nextFireTime = Time.time + fireRate;
+        }
+
+        private Vector3 GetAimPoint(PerceptionSystem.ThreatInfo threat)
+        {
+            Vector3 defaultAimPoint = threat.lastSeenPosition + Vector3.up * 1.0f;
+
+            if (!usePredictiveAim || threat.ConfidenceNow < predictionConfidenceThreshold)
+            {
+                return defaultAimPoint;
+            }
+
+            Vector3 toTarget = threat.lastSeenPosition - transform.position;
+            float distanceToTarget = toTarget.magnitude;
+
+            if (distanceToTarget > range)
+            {
+                return defaultAimPoint;
+            }
+
+            Vector3 lateralVelocity = Vector3.ProjectOnPlane(threat.estimatedVelocity, toTarget.normalized);
+            if (lateralVelocity.magnitude < lateralVelocityThreshold)
+            {
+                return defaultAimPoint;
+            }
+
+            Vector3 leadOffset = threat.predictedPosition - threat.lastSeenPosition;
+            float allowedLead = maxLeadDistance;
+
+            if (distanceToTarget < closeRangeLeadClampDistance)
+            {
+                allowedLead = Mathf.Min(allowedLead, closeRangeMaxLead);
+            }
+
+            leadOffset = Vector3.ClampMagnitude(leadOffset, allowedLead);
+            return threat.lastSeenPosition + leadOffset + Vector3.up * 1.0f;
         }
 
 
