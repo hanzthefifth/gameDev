@@ -95,9 +95,11 @@
     <Compile Include="Assets\Code\Interface\HealthUI.cs" />
     <Compile Include="Assets\Code\Character\Player\DebugDamageTester.cs" />
     <Compile Include="Assets\Code\Weapons\Muzzle.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\PerceptionSystem.cs" />
     <Compile Include="Assets\Code\Interface\TextMouseLock.cs" />
     <Compile Include="Assets\Code\Legacy\ExplosionScript.cs" />
     <Compile Include="Assets\Code\Character\Enemy\EnemyAIDebugger.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\TacticalMovement.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\Code\Character\Combat\IDamageable.cs" />
     <Compile Include="Assets\Code\Weapons\MagazineBehaviour.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\Code\Legacy\DebrisScript.cs" />
     <Compile Include="Assets\Code\Interface\TextTimescale.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\HumanEnemyAI2.cs" />
     <Compile Include="Assets\Code\Character\Combat\damageType.cs" />
     <Compile Include="Assets\Code\Legacy\ExplosiveBarrelScript.cs" />
     <Compile Include="Assets\Code\Animation\PlaySoundBehaviour.cs" />
@@ -116,6 +119,7 @@
     <Compile Include="Assets\Code\Camera\CameraLook.cs" />
     <Compile Include="Assets\Code\Character\Player\states\airborneState.cs" />
     <Compile Include="Assets\Code\Character\Enemy\ClickMove.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\RoleProfile.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\Code\Interface\StaminaUI.cs" />
     <Compile Include="Assets\Code\Interface\Element.cs" />
@@ -129,6 +133,7 @@
     <Compile Include="Assets\Code\Legacy\ProjectileScript.cs" />
     <Compile Include="Assets\Code\Legacy\TargetScript.cs" />
     <Compile Include="Assets\Code\Legacy\PlayParticles.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\CombatStateMachine.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
     <Compile Include="Assets\Code\Legacy\ImpactScript.cs" />
     <Compile Include="Assets\Code\Legacy\Projectile.cs" />
@@ -170,8 +175,11 @@
     <Compile Include="Assets\Code\Weapons\WeaponConfig.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Code\Animation\AnimationReceiver.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\EnemyHealth2.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\StuckDetection.cs" />
     <Compile Include="Assets\Code\Legacy\CasingScript.cs" />
     <Compile Include="Assets\Code\Services\ServiceLocator.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\WeaponSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Infima Games\Low Poly Shooter Pack - Free Sample\Art\TextMesh Pro\Resources\Shaders\TMPro.cginc" />

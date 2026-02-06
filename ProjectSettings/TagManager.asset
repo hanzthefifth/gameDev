@@ -12,8 +12,8 @@ TagManager:
   - Weapon
   - Water
   - UI
-  - 
-  - 
+  - PlayerHitbox
+  - EnemyHitbox
   - 
   - 
   - 
