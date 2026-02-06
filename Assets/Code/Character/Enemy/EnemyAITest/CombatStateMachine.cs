@@ -2,12 +2,13 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
 
-namespace EnemyAI.Complete{
+namespace EnemyAI.Complete
+{
     // ========================================================================
     // STATE MACHINE - Coordinates behavior
     // ========================================================================
 
-public class CombatStateMachine : MonoBehaviour
+    public class CombatStateMachine : MonoBehaviour
     {
         public enum State
         {
@@ -22,6 +23,11 @@ public class CombatStateMachine : MonoBehaviour
         private CombatAI owner;
         private PerceptionSystem perception;
         private NavMeshAgent agent;
+        
+        [Header("State Settings")]
+        [SerializeField] private float searchDuration = 4.0f;
+        [SerializeField] private float investigateWaitTime = 1.5f;
+        
         [Header("Stuck Detection")]
         [SerializeField] private float stuckSpeedThreshold = 0.05f;
         [SerializeField] private float stuckTimeToReset = 1.5f;
@@ -31,8 +37,11 @@ public class CombatStateMachine : MonoBehaviour
         private int patrolIndex = 0;
         private Vector3 investigatePosition;
         private float stuckTimer;
+        private float searchTimer;
+        private float investigateTimer;
         
         public bool IsInCombat => currentState == State.Combat;
+        public State CurrentState => currentState; // For debugging
         
         public void Initialize(CombatAI owner, PerceptionSystem perception, NavMeshAgent agent)
         {
@@ -77,13 +86,13 @@ public class CombatStateMachine : MonoBehaviour
                 {
                     return State.Investigate;
                 }
-                else
+                else if (threat.ConfidenceNow > 0.1f)
                 {
                     return State.Search;
                 }
             }
             
-            // No threat
+            // No threat - check alertness
             if (perception.GetAlertLevel() == AlertLevel.Alert)
             {
                 return State.Investigate;
@@ -103,6 +112,8 @@ public class CombatStateMachine : MonoBehaviour
             if (currentState == newState)
                 return;
             
+            Debug.Log($"[StateMachine] State change: {currentState} → {newState}");
+            
             // Exit current state
             OnExitState(currentState);
             
@@ -116,19 +127,44 @@ public class CombatStateMachine : MonoBehaviour
             switch (state)
             {
                 case State.Combat:
-                    agent.isStopped = true;
+                    agent.isStopped = false; // Allow movement for repositioning
                     break;
                 
                 case State.Investigate:
                     investigatePosition = perception.CurrentThreat?.lastSeenPosition 
                         ?? transform.position;
+                    agent.isStopped = false;
                     agent.SetDestination(investigatePosition);
+                    investigateTimer = 0f;
+                    Debug.Log($"[StateMachine] Investigating position: {investigatePosition}");
                     break;
                 
                 case State.Patrol:
+                    agent.isStopped = false;
                     if (patrolPoints != null && patrolPoints.Length > 0)
                     {
                         agent.SetDestination(patrolPoints[patrolIndex].position);
+                    }
+                    break;
+
+                case State.Search:
+                    searchTimer = 0f;
+                    agent.isStopped = false;
+                    
+                    if (perception.CurrentThreat != null)
+                    {
+                        // Try prediction first
+                        Vector3 predictedSpot = perception.CurrentThreat.GetPredictedNavMeshPosition(2.0f, agent);
+                        
+                        // Validate prediction is reasonable
+                        float distanceToPrediction = Vector3.Distance(transform.position, predictedSpot);
+                        if (distanceToPrediction > 50f) // Sanity check
+                        {
+                            predictedSpot = perception.CurrentThreat.lastSeenPosition;
+                        }
+                        
+                        Debug.Log($"[StateMachine] Searching predicted position: {predictedSpot}");
+                        agent.SetDestination(predictedSpot);
                     }
                     break;
             }
@@ -182,25 +218,65 @@ public class CombatStateMachine : MonoBehaviour
         
         private void ExecuteInvestigate()
         {
-            if (!agent.pathPending && agent.remainingDistance < 1f)
+            // Face movement direction while moving
+            if (agent.velocity.magnitude > 0.1f)
             {
-                // Reached investigation point
-                // Look around, then return to patrol or search
+                Vector3 moveDir = agent.velocity.normalized;
+                if (moveDir.sqrMagnitude > 0.01f)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(moveDir);
+                    transform.rotation = Quaternion.Slerp(
+                        transform.rotation, 
+                        targetRotation, 
+                        Time.deltaTime * 5f
+                    );
+                }
+            }
+
+            // When we arrive at investigation point
+            if (!agent.pathPending && agent.remainingDistance < 1.0f)
+            {
+                investigateTimer += Time.deltaTime;
+                
+                // Look around while waiting
+                float angle = Mathf.Sin(Time.time * 2f) * 30f;
+                transform.Rotate(0, angle * Time.deltaTime, 0);
+                
+                // After waiting, transition to search or patrol
+                if (investigateTimer >= investigateWaitTime)
+                {
+                    if (perception.CurrentThreat != null && perception.CurrentThreat.ConfidenceNow > 0.1f)
+                    {
+                        ChangeState(State.Search);
+                    }
+                    else
+                    {
+                        // Lost them completely, return to patrol
+                        perception.alertness = 0f;
+                        ChangeState(State.Patrol);
+                    }
+                }
             }
         }
         
         private void ExecuteCombat()
         {
-            // This is handled by TacticalMovement and WeaponSystem
-            // State machine just coordinates
-            
             var movement = GetComponent<TacticalMovement>();
             var weapon = GetComponent<WeaponSystem>();
-            if (weapon != null && perception.CurrentThreat?.hasVisualContact == true)
+            
+            // Handle movement (repositioning)
+            if (movement != null)
+            {
+                movement.UpdateCombatPosition();
+            }
+            
+            // Handle weapon engagement
+            if (weapon != null && perception.CurrentThreat != null && perception.CurrentThreat.hasVisualContact)
             {
                 float distance = Vector3.Distance(transform.position, perception.CurrentThreat.target.position);
                 
-                if (distance <= 2.5f) // Melee range
+                // Choose melee or ranged based on distance
+                if (distance <= 2.5f)
                 {
                     weapon.EngageMelee(perception.CurrentThreat.target);
                 }
@@ -209,22 +285,40 @@ public class CombatStateMachine : MonoBehaviour
                     weapon.EngageTarget(perception.CurrentThreat);
                 }
             }
-            
-            if (movement != null)
-            {
-                movement.UpdateCombatPosition();
-            }
-            
-            if (weapon != null && perception.CurrentThreat?.hasVisualContact == true)
-            {
-                weapon.EngageTarget(perception.CurrentThreat);
-            }
         }
         
         private void ExecuteSearch()
         {
-            // Search pattern around last known position
-            // Implementation depends on requirements
+            searchTimer += Time.deltaTime;
+            
+            // Look around while searching
+            if (agent.velocity.magnitude < 0.1f)
+            {
+                float angle = Mathf.Sin(Time.time * 2f) * 45f;
+                transform.Rotate(0, angle * Time.deltaTime, 0);
+            }
+            else
+            {
+                // Face movement direction while moving
+                Vector3 moveDir = agent.velocity.normalized;
+                if (moveDir.sqrMagnitude > 0.01f)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(moveDir);
+                    transform.rotation = Quaternion.Slerp(
+                        transform.rotation, 
+                        targetRotation, 
+                        Time.deltaTime * 5f
+                    );
+                }
+            }
+
+            // If we've searched long enough, give up
+            if (searchTimer > searchDuration)
+            {
+                Debug.Log("[StateMachine] Search timeout, returning to patrol");
+                perception.alertness = 0f; // Reset alertness
+                ChangeState(State.Patrol);
+            }
         }
 
         private void CheckIfStuck()
@@ -242,8 +336,19 @@ public class CombatStateMachine : MonoBehaviour
                 
                 if (stuckTimer >= stuckTimeToReset)
                 {
+                    Debug.LogWarning($"[StateMachine] {name} is stuck, resetting");
                     agent.ResetPath();
-                    currentState = State.Idle;
+                    
+                    // Return to safe state
+                    if (patrolPoints != null && patrolPoints.Length > 0)
+                    {
+                        ChangeState(State.Patrol);
+                    }
+                    else
+                    {
+                        ChangeState(State.Idle);
+                    }
+                    
                     stuckTimer = 0f;
                 }
             }
@@ -252,8 +357,5 @@ public class CombatStateMachine : MonoBehaviour
                 stuckTimer = 0f;
             }
         }
-
     }
-    
-       
 }

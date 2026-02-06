@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System.Collections.Generic;
 
 namespace EnemyAI.Complete{
@@ -23,6 +24,30 @@ namespace EnemyAI.Complete{
                     this.timestamp = timestamp;
                 }
             }
+            
+            public Vector3 GetPredictedNavMeshPosition(float timeAhead, NavMeshAgent agentReference)
+            {
+                // 1. Linear prediction
+                Vector3 rawPrediction = lastSeenPosition + (estimatedVelocity * timeAhead);
+                
+                // 2. Sample NavMesh to find nearest valid floor point
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(rawPrediction, out hit, 4.0f, NavMesh.AllAreas))
+                {
+                    return hit.position;
+                }
+                
+                // 3. If prediction is off-mesh (e.g. over a ledge), trace path to edge
+                NavMeshPath path = new NavMeshPath();
+                if (agentReference.CalculatePath(rawPrediction, path) && path.status == NavMeshPathStatus.PathPartial)
+                {
+                    // Return the last reachable point (the edge they jumped off)
+                    return path.corners[path.corners.Length - 1];
+                }
+
+                return lastSeenPosition;
+            }
+
 
             public Transform target;
             public Vector3 lastSeenPosition;
@@ -30,6 +55,7 @@ namespace EnemyAI.Complete{
             public float lastUpdateTime;
             public bool hasVisualContact;
             public Vector3 estimatedVelocity;
+            public bool seenThisFrame;
 
             private readonly List<PositionSample> positionSamples = new List<PositionSample>();
             private int maxSamples = 6;
@@ -98,6 +124,9 @@ namespace EnemyAI.Complete{
 
                 return velocitySum / totalWeight;
             }
+
+
+            
         }
         
         [Header("Detection Settings")]
@@ -136,6 +165,13 @@ namespace EnemyAI.Complete{
         
         private void ScanForTargets()
         {
+
+            // Reset per-frame flags
+            foreach (var kvp in threats)
+            {
+                kvp.Value.seenThisFrame = false;
+            }
+
             // Find potential targets in range
             Collider[] potentials = Physics.OverlapSphere(
                 transform.position, 
@@ -173,6 +209,16 @@ namespace EnemyAI.Complete{
                     BoostAlertness(0.5f);
                 }
             }
+            //after processeing potentials, anything not seen this frame loses visual
+            foreach (var kvp in threats)
+            {
+                ThreatInfo info = kvp.Value;
+                if (!info.seenThisFrame)
+                {
+                    info.hasVisualContact = false;
+                }
+            }
+
         }
         
         private void RegisterThreat(Transform target, Vector3 position, 
@@ -200,6 +246,7 @@ namespace EnemyAI.Complete{
                 info.confidence = Mathf.Min(1f, info.confidence + confidence);
                 info.lastUpdateTime = Time.time;
                 info.hasVisualContact = visual;
+                info.seenThisFrame = true;
                 info.ConfigurePrediction(threatPredictionLookAheadTime, positionSampleBufferSize);
                 info.AddPositionSample(position, Time.time);
             }
@@ -288,5 +335,6 @@ namespace EnemyAI.Complete{
             
             alertness = Mathf.Max(0f, alertness - Time.deltaTime * 0.1f);
         }
+
     }
 }

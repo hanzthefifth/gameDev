@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
 
-namespace EnemyAI.Complete{
-// ========================================================================
+namespace EnemyAI.Complete
+{
+    // ========================================================================
     // TACTICAL MOVEMENT - Handles positioning in combat
     // ========================================================================
     
@@ -66,7 +67,10 @@ namespace EnemyAI.Complete{
             {
                 // Hold position and face target
                 agent.isStopped = true;
-                FaceTarget(facingPosition);
+                
+                // FIX: Calculate direction, not pass position directly
+                Vector3 directionToFace = facingPosition - transform.position;
+                FaceDirection(directionToFace);
             }
         }
         
@@ -147,17 +151,15 @@ namespace EnemyAI.Complete{
             return score;
         }
         
-        private void FaceTarget(Vector3 targetPosition)
+        private void FaceDirection(Vector3 direction)
         {
-            Vector3 direction = targetPosition - transform.position;
             direction.y = 0;
-            
             if (direction.sqrMagnitude > 0.01f)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
                 transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    targetRotation,
+                    transform.rotation, 
+                    targetRotation, 
                     Time.deltaTime * 8f
                 );
             }

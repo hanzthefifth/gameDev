@@ -88,7 +88,7 @@ namespace EnemyAI.Complete
             if (target == null)
                 return;
 
-            Debug.Log($"[WeaponSystem] EngageTarget: target={target.name}, root={target.root.name}, pos={target.position}");
+            //Debug.Log($"[WeaponSystem] EngageTarget: target={target.name}, root={target.root.name}, pos={target.position}");
             Vector3 targetPos = GetAimPoint(threat);
             // NEW: Check if we have clear shot
             // ✅ Pass both target and targetPos
@@ -140,7 +140,7 @@ namespace EnemyAI.Complete
         private void Fire(Vector3 targetPosition)
         {
 
-            Debug.Log("[WeaponSystem] Fire() called");
+            //Debug.Log("[WeaponSystem] Fire() called");
             // Fallback if firePoint is somehow still null
             Vector3 origin;
             if (firePoint != null)
@@ -150,15 +150,14 @@ namespace EnemyAI.Complete
             else
             {
                 origin = transform.position + Vector3.up * 1.5f;
-                Debug.LogWarning($"[WeaponSystem] FirePoint is null on {name}, " +
-                                 "using transform.position as origin.");
+                //Debug.LogWarning($"[WeaponSystem] FirePoint is null on {name}, " + "using transform.position as origin.");
             }
 
             float dist = Vector3.Distance(origin, targetPosition);
-            Debug.Log($"[WeaponSystem] origin={origin}, targetPos={targetPosition}, dist={dist}");
+            //Debug.Log($"[WeaponSystem] origin={origin}, targetPos={targetPosition}, dist={dist}");
             Vector3 direction = (targetPosition - origin).normalized;
             // draw the ray so you can see it in Scene view
-            Debug.DrawRay(origin, direction * range, Color.red, 0.1f);
+            //Debug.DrawRay(origin, direction * range, Color.red, 0.1f);
             float currentSpread = baseAccuracy;
 
             if (agent != null && agent.enabled && agent.velocity.magnitude > 0.5f) //extra spread while moving
@@ -174,20 +173,20 @@ namespace EnemyAI.Complete
                     Transform hitRoot = hit.collider.transform.root;
                     int layer = hit.collider.gameObject.layer;
 
-                    Debug.Log($"[WeaponSystem] Raycast HIT: {hit.collider.name} " +
-                    $"(layer: {LayerMask.LayerToName(layer)}), root: {hitRoot.name}");
+                    //Debug.Log($"[WeaponSystem] Raycast HIT: {hit.collider.name} " +
+                    //$"(layer: {LayerMask.LayerToName(layer)}), root: {hitRoot.name}");
                     
                     // 3. Self-hit guard (enemy shooting itself)
                         if (ownerTransform != null && hitRoot == ownerTransform.root)
                         {
-                            Debug.Log("[WeaponSystem] Ignoring self-hit on " + hit.collider.name);
+                            //Debug.Log("[WeaponSystem] Ignoring self-hit on " + hit.collider.name);
                             return;
                         }
 
                     IDamageable damageable = hit.collider.GetComponentInParent<IDamageable>();
                     if (damageable != null)
                     {
-                        Debug.Log("[WeaponSystem] Calling TakeDamage on " + hitRoot.name);
+                        //Debug.Log("[WeaponSystem] Calling TakeDamage on " + hitRoot.name);
                         damageable.TakeDamage(damage);
                     }
                     else
@@ -198,7 +197,7 @@ namespace EnemyAI.Complete
                 }
                 else
                 {
-                    Debug.Log("[WeaponSystem] Raycast did NOT hit anything.");
+                    //Debug.Log("[WeaponSystem] Raycast did NOT hit anything.");
                 }
         }      
 
