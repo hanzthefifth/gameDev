@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [Header("Health")]
     [SerializeField] private float maxHealth = 100f;
@@ -41,7 +41,7 @@ public class PlayerHealth : MonoBehaviour
 
             if (!Mathf.Approximately(CurrentHealth, old))
             {
-                Debug.Log($"[PlayerHealth] Regenerating: {CurrentHealth:F1}/{maxHealth}");
+                //Debug.Log($"[PlayerHealth] Regenerating: {CurrentHealth:F1}/{maxHealth}");
                 NotifyHealthChanged();
             }
         }
@@ -123,7 +123,7 @@ public class PlayerHealth : MonoBehaviour
     {
         float normalized = CurrentHealth / maxHealth;
         
-        Debug.Log($"[PlayerHealth] Notifying listeners - Health: {CurrentHealth:F1}/{maxHealth} (normalized: {normalized:F2})");
+       // Debug.Log($"[PlayerHealth] Notifying listeners - Health: {CurrentHealth:F1}/{maxHealth} (normalized: {normalized:F2})");
         
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         OnHealthNormalizedChanged?.Invoke(normalized);

@@ -34,10 +34,10 @@ public class HealthUI : MonoBehaviour
 
         // Subscribe to events
         playerHealth.OnHealthNormalizedChanged += HandleHealthNormalizedChanged;
-        playerHealth.OnHealthChanged += HandleHealthChanged;
+        //playerHealth.OnHealthChanged += HandleHealthChanged; //for debugging
 
         // Force initial sync
-        HandleHealthChanged(playerHealth.CurrentHealth, playerHealth.MaxHealth);
+        //HandleHealthChanged(playerHealth.CurrentHealth, playerHealth.MaxHealth); //for debugging
         HandleHealthNormalizedChanged(playerHealth.CurrentHealth / playerHealth.MaxHealth);
         
         Debug.Log($"[HealthUI] Initialized. Current health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
@@ -49,7 +49,7 @@ public class HealthUI : MonoBehaviour
         if (playerHealth != null)
         {
             playerHealth.OnHealthNormalizedChanged -= HandleHealthNormalizedChanged;
-            playerHealth.OnHealthChanged -= HandleHealthChanged;
+           playerHealth.OnHealthChanged -= HandleHealthChanged; //for debugging
         }
     }
 
@@ -58,22 +58,22 @@ public class HealthUI : MonoBehaviour
         if (healthFillImage != null)
         {
             healthFillImage.fillAmount = normalized;
-            Debug.Log($"[HealthUI] Fill amount updated: {normalized:F2}");
+            //Debug.Log($"[HealthUI] Fill amount updated: {normalized:F2}");
         }
          if (healthSlider != null)
         {
             healthSlider.value = normalized;
-            Debug.Log($"[HealthUI] Slider value updated: {normalized:F2}");
+            //Debug.Log($"[HealthUI] Slider value updated: {normalized:F2}");
         }
     }
 
-
+        //health debugging
     private void HandleHealthChanged(float current, float max)
     {
         if (healthText != null)
         {
             healthText.text = $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
-            Debug.Log($"[HealthUI] Text updated: {current:F1}/{max:F1}");
+            //Debug.Log($"[HealthUI] Text updated: {current:F1}/{max:F1}");
         }
     }
 }

@@ -97,6 +97,7 @@
     <Compile Include="Assets\Code\Weapons\Muzzle.cs" />
     <Compile Include="Assets\Code\Interface\TextMouseLock.cs" />
     <Compile Include="Assets\Code\Legacy\ExplosionScript.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\EnemyAIDebugger.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\Code\Character\Combat\IDamageable.cs" />
     <Compile Include="Assets\Code\Weapons\MagazineBehaviour.cs" />
