@@ -11,10 +11,10 @@ namespace EnemyAI.Complete
         [SerializeField] private float range = 25f;
         [SerializeField] private float baseAccuracy = 2f; // degrees of spread
         [SerializeField] private bool usePredictiveAim = true;
-        [SerializeField, Range(0f, 1f)] private float predictionConfidenceThreshold = 0.65f;
-        [SerializeField, Min(0f)] private float lateralVelocityThreshold = 0.75f;
-        [SerializeField, Min(0f)] private float maxLeadDistance = 4f;
-        [SerializeField, Min(0f)] private float closeRangeLeadClampDistance = 8f;
+        [SerializeField, Range(0f, 1f)] private float predictionConfidenceThreshold = 0.65f; //predication gate for aiming lead
+        [SerializeField, Min(0f)] private float lateralVelocityThreshold = 0.75f; //prevents leading when target is mostly moving towards/away or strafing too slow
+        [SerializeField, Min(0f)] private float maxLeadDistance = 4f; //hard cap on lead offset to avoid wild shots
+        [SerializeField, Min(0f)] private float closeRangeLeadClampDistance = 8f; //stops over leading with extra clamp when target is nearby
         [SerializeField, Min(0f)] private float closeRangeMaxLead = 1.25f;
         [Header("Melee Attack")]
         [SerializeField] private bool hasMeleeAttack = true;

@@ -1,8 +1,3 @@
-// ============================================================================
-// COMPLETE INTEGRATION EXAMPLE
-// This file shows how all systems work together in a real scenario
-// ============================================================================
-
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
@@ -10,6 +5,13 @@ using System.Collections.Generic;
 // ============================================================================
 // SCENARIO: Enemy enters combat, maintains distance, relocates tactically
 // ============================================================================
+/*
+ * NEXT STEPS:
+ * - Add door volumes and crowding prevention
+ * - Implement suppression system
+ * - Add search patterns
+ * - Create squad coordination
+ */
 
 namespace EnemyAI.Complete
 {
@@ -31,41 +33,18 @@ namespace EnemyAI.Complete
         [Header("Component References")]
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private Animator animator;
-
         [SerializeField] private PerceptionSystem perception;
         [SerializeField] private CombatStateMachine stateMachine;
         [SerializeField] private TacticalMovement movement;
         [SerializeField] private WeaponSystem weapon;
         [SerializeField] private RoleProfile role;
         
-        // Subsystems
-        // private PerceptionSystem perception;
-        // private CombatStateMachine stateMachine;
-        // private TacticalMovement movement;
-        // private WeaponSystem weapon;
-        // private RoleProfile role;
         [Header("Settings")]
         [SerializeField] private Transform[] patrolPoints;
         
         
         private void Awake()
         {
-            // Get or add components
-            // agent = GetComponent<NavMeshAgent>();
-            // animator = GetComponentInChildren<Animator>();
-            
-            // // Initialize subsystems
-            // perception = gameObject.AddComponent<PerceptionSystem>();
-            // stateMachine = gameObject.AddComponent<CombatStateMachine>();
-            // movement = gameObject.AddComponent<TacticalMovement>();
-            // weapon = gameObject.AddComponent<WeaponSystem>();
-            // role = gameObject.AddComponent<RoleProfile>();
-            
-            // // Wire up dependencies
-            // stateMachine.Initialize(this, perception, agent);
-            // movement.Initialize(agent, perception, role);
-            // weapon.Initialize(transform, agent);
-            // Ensure references are filled even if Reset never ran
             if (!agent) agent = GetComponent<NavMeshAgent>();
             if (!perception) perception = GetComponent<PerceptionSystem>();
             if (!stateMachine) stateMachine = GetComponent<CombatStateMachine>();
@@ -130,44 +109,5 @@ namespace EnemyAI.Complete
             perception.OnSoundHeard(soundPosition, intensity);
         }
     }
-    
-     
-    
+
 }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-   
-
-// ============================================================================
-// USAGE EXAMPLE
-// ============================================================================
-
-/*
- * TO USE THIS SYSTEM:
- * 
- * 1. Create empty GameObject in scene
- * 2. Add NavMeshAgent component
- * 3. Add CombatAI component (it will auto-add subsystems)
- * 4. Assign patrol points if desired
- * 5. Configure role in RoleProfile component
- * 
- * The enemy will now:
- * - Patrol when relaxed
- * - Detect player via vision
- * - Enter combat and maintain preferred distance
- * - Reposition tactically based on role
- * - Shoot with accuracy penalties while moving
- * 
- * NEXT STEPS:
- * - Add door volumes and crowding prevention
- * - Implement suppression system
- * - Add search patterns
- * - Create squad coordination
- */

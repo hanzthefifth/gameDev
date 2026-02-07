@@ -178,7 +178,6 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Code\Animation\AnimationReceiver.cs" />
     <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\EnemyHealth2.cs" />
-    <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\StuckDetection.cs" />
     <Compile Include="Assets\Code\Legacy\CasingScript.cs" />
     <Compile Include="Assets\Code\Services\ServiceLocator.cs" />
     <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\WeaponSystem.cs" />

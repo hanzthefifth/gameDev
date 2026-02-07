@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections.Generic;
 
 namespace EnemyAI.Complete
 {
@@ -26,11 +25,12 @@ namespace EnemyAI.Complete
         
         [Header("State Settings")]
         [SerializeField] private float searchDuration = 4.0f;
-        [SerializeField] private float investigateWaitTime = 1.5f;
+        [SerializeField] private float investigateWaitTime = 1.5f; //wait/look around time when arriving at last seen point befor switching to search/patrol
+        [SerializeField] private float combatToInvestigateDelay = 0.5f; // NEW: Hysteresis
         
         [Header("Stuck Detection")]
-        [SerializeField] private float stuckSpeedThreshold = 0.05f;
-        [SerializeField] private float stuckTimeToReset = 1.5f;
+        [SerializeField] private float stuckSpeedThreshold = 0.05f; //im trying to move but nearly not moving, speed cutoff
+        [SerializeField] private float stuckTimeToReset = 2f; //how long before path reset + safe fallback state
         
         // State-specific data
         private Transform[] patrolPoints;
@@ -39,6 +39,7 @@ namespace EnemyAI.Complete
         private float stuckTimer;
         private float searchTimer;
         private float investigateTimer;
+        //private float lostVisualContactTime; // NEW: Track when we lost LOS
         
         public bool IsInCombat => currentState == State.Combat;
         public State CurrentState => currentState; // For debugging
@@ -127,7 +128,7 @@ namespace EnemyAI.Complete
             switch (state)
             {
                 case State.Combat:
-                    agent.isStopped = false; // Allow movement for repositioning
+                    agent.isStopped = false; // Allow movement for repositioning (TacticalMovement will manage ResetPath when holding)
                     break;
                 
                 case State.Investigate:
@@ -204,6 +205,8 @@ namespace EnemyAI.Complete
         private void ExecuteIdle()
         {
             agent.isStopped = true;
+            if (agent.hasPath)
+                agent.ResetPath();
         }
         
         private void ExecutePatrol()
@@ -232,15 +235,12 @@ namespace EnemyAI.Complete
                     );
                 }
             }
-
             // When we arrive at investigation point
             if (!agent.pathPending && agent.remainingDistance < 1.0f)
             {
                 investigateTimer += Time.deltaTime;
                 
-                // Look around while waiting
-                float angle = Mathf.Sin(Time.time * 2f) * 30f;
-                transform.Rotate(0, angle * Time.deltaTime, 0);
+                // No extra rotation needed; vision cone handles scanning
                 
                 // After waiting, transition to search or patrol
                 if (investigateTimer >= investigateWaitTime)
@@ -291,15 +291,11 @@ namespace EnemyAI.Complete
         {
             searchTimer += Time.deltaTime;
             
-            // Look around while searching
-            if (agent.velocity.magnitude < 0.1f)
+            // No extra look-around rotation; wide cone handles search
+            
+            // Face movement direction while moving (for natural look)
+            if (agent.velocity.magnitude > 0.1f)
             {
-                float angle = Mathf.Sin(Time.time * 2f) * 45f;
-                transform.Rotate(0, angle * Time.deltaTime, 0);
-            }
-            else
-            {
-                // Face movement direction while moving
                 Vector3 moveDir = agent.velocity.normalized;
                 if (moveDir.sqrMagnitude > 0.01f)
                 {
@@ -307,7 +303,7 @@ namespace EnemyAI.Complete
                     transform.rotation = Quaternion.Slerp(
                         transform.rotation, 
                         targetRotation, 
-                        Time.deltaTime * 5f
+                        Time.deltaTime * 3f // Slower rotation for searching
                     );
                 }
             }
@@ -357,5 +353,7 @@ namespace EnemyAI.Complete
                 stuckTimer = 0f;
             }
         }
-    }
+
+
+    } 
 }

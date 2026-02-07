@@ -121,22 +121,28 @@ namespace EnemyAI.Complete{
                 {
                     return Vector3.zero;
                 }
-
                 return velocitySum / totalWeight;
             }
 
 
             
-        }
+        }// end of ThreadInfo class
         
         [Header("Detection Settings")]
         [SerializeField] private float visionRange = 25f;
         [SerializeField] private float visionAngle = 120f;
         [SerializeField] private float hearingRange = 15f;
-        [SerializeField] private LayerMask targetLayer = 1 << 6; // Player layer
-        [SerializeField] private LayerMask obstacleLayer = 1 << 0; // Default layer
-        [SerializeField, Min(2)] private int positionSampleBufferSize = 6;
-        [SerializeField, Min(0f)] private float threatPredictionLookAheadTime = 0.35f;
+        [SerializeField] private LayerMask targetLayer = 1 << 6; // what can be detected
+        [SerializeField] private LayerMask obstacleLayer = 1 << 0; // what can block los
+        [SerializeField, Min(2)] private int positionSampleBufferSize = 6; //number of movement samples used. High = smooth but laggyr prediction; lower = twitchier but responsive
+        [SerializeField, Min(0f)] private float threatPredictionLookAheadTime = 0.35f; //look ahdead horizon, high = more lead, but overshoot risk
+        
+        [Header("Dynamic Vision Cone")]
+        [SerializeField] private float relaxedVisionAngle = 90f;    // Normal patrol vision
+        [SerializeField] private float alertVisionAngle = 160f;     // Investigating vision
+        [SerializeField] private float combatVisionAngle = 120f;    // Combat vision
+        [SerializeField] private float searchVisionAngle = 200f;    // Searching vision (almost 360°)
+        [SerializeField] private float visionAngleTransitionSpeed = 2f; // How fast cone widens/narrows
         
         [Header("Alertness")]
         public float alertness = 0f;  // 0 = calm, 1 = full combat
@@ -146,9 +152,15 @@ namespace EnemyAI.Complete{
         private Dictionary<Transform, ThreatInfo> threats = new Dictionary<Transform, ThreatInfo>();
         private ThreatInfo primaryThreat;
         
+        // Dynamic vision cone tracking
+        private float currentVisionAngle;
+        private float targetVisionAngle;
+        
         // Public accessors
         public ThreatInfo CurrentThreat => primaryThreat;
         public bool HasThreat => primaryThreat != null && primaryThreat.ConfidenceNow > 0.2f;
+        public float CurrentVisionAngle => currentVisionAngle; // For debug visualization
+        
         public AlertLevel GetAlertLevel()
         {
             if (alertness < ALERT_THRESHOLD) return AlertLevel.Relaxed;
@@ -156,24 +168,72 @@ namespace EnemyAI.Complete{
             return AlertLevel.Combat;
         }
         
+        private void Awake()
+        {
+            currentVisionAngle = relaxedVisionAngle;
+            targetVisionAngle = relaxedVisionAngle;
+        }
+        
         private void Update()
         {
+            UpdateDynamicVisionCone();
             ScanForTargets();
             UpdateThreats();
             DecayAlertness();
         }
         
+        /// Dynamically adjusts vision cone based on alertness and whether we're searching
+        private void UpdateDynamicVisionCone()
+        {
+            // Determine target angle based on state
+            if (!HasThreat)
+            {
+                // No threat - use relaxed angle
+                targetVisionAngle = relaxedVisionAngle;
+            }
+            else
+            {
+                var threat = CurrentThreat;
+                
+                if (threat.hasVisualContact)
+                {
+                    // In combat - use combat angle (medium)
+                    targetVisionAngle = combatVisionAngle;
+                }
+                else if (threat.ConfidenceNow > 0.3f)
+                {
+                    // Investigating - widen to alert angle
+                    targetVisionAngle = alertVisionAngle;
+                }
+                else if (threat.ConfidenceNow > 0.1f)
+                {
+                    // Searching - very wide angle (almost 360°)
+                    targetVisionAngle = searchVisionAngle;
+                }
+                else
+                {
+                    // Lost them - return to relaxed
+                    targetVisionAngle = relaxedVisionAngle;
+                }
+            }
+            
+            // Smoothly transition to target angle
+            currentVisionAngle = Mathf.Lerp(
+                currentVisionAngle,
+                targetVisionAngle,
+                Time.deltaTime * visionAngleTransitionSpeed
+            );
+        }
+        
         private void ScanForTargets()
         {
-
             // Reset per-frame flags
             foreach (var kvp in threats)
             {
                 kvp.Value.seenThisFrame = false;
             }
 
-            // Find potential targets in range
-            Collider[] potentials = Physics.OverlapSphere(
+            Collider[] potentials = Physics.OverlapSphere( // Find potential targets in range
                 transform.position, 
                 visionRange, 
                 targetLayer
@@ -183,11 +243,11 @@ namespace EnemyAI.Complete{
             {
                 Transform target = col.transform;
                 
-                // Check if in view cone
+                // Check if in DYNAMIC view cone (uses currentVisionAngle instead of fixed visionAngle)
                 Vector3 toTarget = target.position - transform.position;
                 float angle = Vector3.Angle(transform.forward, toTarget);
                 
-                if (angle > visionAngle * 0.5f)
+                if (angle > currentVisionAngle * 0.5f)
                     continue;
                 
                 // Check line of sight
@@ -209,8 +269,8 @@ namespace EnemyAI.Complete{
                     BoostAlertness(0.5f);
                 }
             }
-            //after processeing potentials, anything not seen this frame loses visual
-            foreach (var kvp in threats)
+        
+            foreach (var kvp in threats) // After processing potentials, anything not seen this frame loses visual
             {
                 ThreatInfo info = kvp.Value;
                 if (!info.seenThisFrame)
@@ -218,7 +278,6 @@ namespace EnemyAI.Complete{
                     info.hasVisualContact = false;
                 }
             }
-
         }
         
         private void RegisterThreat(Transform target, Vector3 position, 
@@ -294,6 +353,7 @@ namespace EnemyAI.Complete{
             primaryThreat = best;
         }
         
+        //WIP
         public void ReportDamage(Vector3 origin, float damage)
         {
             // Instantly go on alert
@@ -327,6 +387,7 @@ namespace EnemyAI.Complete{
         {
             alertness = Mathf.Min(1f, alertness + amount);
         }
+
         
         private void DecayAlertness()
         {
@@ -335,6 +396,48 @@ namespace EnemyAI.Complete{
             
             alertness = Mathf.Max(0f, alertness - Time.deltaTime * 0.1f);
         }
-
+        
+        // Debug visualization
+        private void OnDrawGizmosSelected()
+        {
+            if (!Application.isPlaying)
+            {
+                currentVisionAngle = visionAngle;
+            }
+            
+            // Vision range circle
+            Gizmos.color = new Color(1f, 1f, 0f, 0.2f);
+            DrawWireArc(transform.position, visionRange, currentVisionAngle);
+            
+            // Vision cone lines
+            Gizmos.color = Color.yellow;
+            Vector3 leftBoundary = Quaternion.Euler(0, -currentVisionAngle * 0.5f, 0) * transform.forward;
+            Vector3 rightBoundary = Quaternion.Euler(0, currentVisionAngle * 0.5f, 0) * transform.forward;
+            Gizmos.DrawLine(transform.position, transform.position + leftBoundary * visionRange);
+            Gizmos.DrawLine(transform.position, transform.position + rightBoundary * visionRange);
+            
+            // Current threat
+            if (primaryThreat != null)
+            {
+                Gizmos.color = primaryThreat.hasVisualContact ? Color.red : Color.orange;
+                Gizmos.DrawLine(transform.position + Vector3.up, primaryThreat.lastSeenPosition + Vector3.up);
+                Gizmos.DrawWireSphere(primaryThreat.lastSeenPosition, 0.5f);
+            }
+        }
+        
+        private void DrawWireArc(Vector3 center, float radius, float angle)
+        {
+            int segments = 30;
+            float angleStep = angle / segments;
+            Vector3 prevPoint = center + Quaternion.Euler(0, -angle * 0.5f, 0) * transform.forward * radius;
+            
+            for (int i = 1; i <= segments; i++)
+            {
+                float currentAngle = -angle * 0.5f + angleStep * i;
+                Vector3 newPoint = center + Quaternion.Euler(0, currentAngle, 0) * transform.forward * radius;
+                Gizmos.DrawLine(prevPoint, newPoint);
+                prevPoint = newPoint;
+            }
+        }
     }
 }
