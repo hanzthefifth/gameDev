@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace EnemyAI.Complete
 {
@@ -8,6 +9,9 @@ namespace EnemyAI.Complete
     {
         [Header("Sound Settings")]
         [SerializeField] private bool debugSounds = false;
+        [SerializeField] private float defaultGunshotIntensity = 10f;
+        [SerializeField] private float defaultGunshotRange = 30f;
+
         
 
         /// Emit a sound that nearby AI can hear
@@ -40,9 +44,9 @@ namespace EnemyAI.Complete
         
 
         /// Quick helper for gunshot sounds
-        public void EmitGunshot()
+        public void EmitGunshot(float intensity, float range)
         {
-            EmitSound(transform.position, 0.8f, 40f);
+            EmitSound(transform.position, defaultGunshotIntensity, defaultGunshotRange);
         }
         
         /// Quick helper for loud events (explosions, doors, etc)

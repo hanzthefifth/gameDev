@@ -103,7 +103,6 @@ namespace EnemyAI.Complete
                 // - We've totally lost threat memory
                 // fall through to "normal" logic to decide next state.
             }
-            // ---------------------------------
             
             if (perception.HasThreat)
             {
@@ -125,6 +124,12 @@ namespace EnemyAI.Complete
             
             // No threat - check alertness
             if (perception.GetAlertLevel() == AlertLevel.Alert)
+            {
+                return State.Investigate;
+            }
+            // NEW: Explicitly catch fresh sounds even if alertness hasn't peaked yet
+            // This makes them react to the FIRST shot instantly
+            if (perception.HasRecentSound && !perception.HasThreat)
             {
                 return State.Investigate;
             }
@@ -160,11 +165,14 @@ namespace EnemyAI.Complete
             {
                 case State.Combat:
                     agent.isStopped = false; // Allow movement for repositioning (TacticalMovement will manage ResetPath when holding)
+                    perception.ClearRecentSound();
                     break;
                 
                 case State.Investigate:
-                    investigatePosition = perception.CurrentThreat?.lastSeenPosition 
-                        ?? transform.position;
+                    // investigatePosition = perception.CurrentThreat?.lastSeenPosition 
+                    //     ?? transform.position;
+                    investigatePosition = perception.CurrentThreat?.lastSeenPosition
+                    ?? (perception.HasRecentSound ? perception.LastHeardSoundPosition : transform.position);
                     agent.isStopped = false;
                     agent.SetDestination(investigatePosition);
                     investigateTimer = 0f;
@@ -232,6 +240,7 @@ namespace EnemyAI.Complete
                     break;
             }
         }
+
         
         private void ExecuteIdle()
         {
@@ -239,6 +248,7 @@ namespace EnemyAI.Complete
             if (agent.hasPath)
                 agent.ResetPath();
         }
+
         
         private void ExecutePatrol()
         {
@@ -249,44 +259,123 @@ namespace EnemyAI.Complete
                 agent.SetDestination(patrolPoints[patrolIndex].position);
             }
         }
+
         
         private void ExecuteInvestigate()
         {
-            // Face movement direction while moving
+            // --------------------------------------------------------------------------
+            // 1. LOGIC PHASE: Decide Priority (Sound vs. Last Known Visual)
+            // --------------------------------------------------------------------------
+            
+            bool shouldFollowSound = false;
+
+            // Check if we have a valid sound in memory
+            if (perception.HasRecentSound)
+            {
+                // Case A: We have NO visual threat info at all.
+                // We must follow the sound.
+                if (perception.CurrentThreat == null) 
+                {
+                    shouldFollowSound = true;
+                }
+                // Case B: We have a threat, BUT the sound is NEWER than our last visual update.
+                // (e.g. We lost sight 5 seconds ago, but heard a gunshot 1 second ago).
+                else if (perception.lastHeardSoundTime > perception.CurrentThreat.lastUpdateTime + 0.5f)
+                {
+                    shouldFollowSound = true;
+                }
+                
+                // BUG FIX EXPLANATION:
+                // If the sound happened BEFORE we last saw the player (soundTime < lastUpdateTime),
+                // 'shouldFollowSound' stays FALSE. This prevents the AI from running back 
+                // to the start of the fight.
+            }
+
+            // --------------------------------------------------------------------------
+            // 2. MOVEMENT PHASE: Set Destination
+            // --------------------------------------------------------------------------
+            
+            Vector3 targetPos = Vector3.zero;
+            bool hasValidDestination = false;
+
+            if (shouldFollowSound)
+            {
+                targetPos = perception.LastHeardSoundPosition;
+                hasValidDestination = true;
+            }
+            // Fallback: If sound is old/invalid, go to the Threat's Last Known Position (LKP)
+            else if (perception.CurrentThreat != null)
+            {
+                targetPos = perception.CurrentThreat.lastSeenPosition;
+                hasValidDestination = true;
+            }
+
+            // Apply the destination to the Agent
+            if (hasValidDestination)
+            {
+                // Only trigger a repath if the target has moved significantly (> 1 meter)
+                // This check prevents spamming the navigation system
+                float distToNewTarget = Vector3.Distance(investigatePosition, targetPos);
+                
+                if (distToNewTarget > 1.0f)
+                {
+                    investigatePosition = targetPos;
+                    agent.SetDestination(investigatePosition);
+                    agent.isStopped = false;
+                    
+                    // CRITICAL: Reset the wait timer because we are moving to a new spot
+                    investigateTimer = 0f; 
+                }
+            }
+
+            // --------------------------------------------------------------------------
+            // 3. ROTATION PHASE: Face movement direction
+            // --------------------------------------------------------------------------
+            
             if (agent.velocity.magnitude > 0.1f)
             {
                 Vector3 moveDir = agent.velocity.normalized;
+                // Ignore very small movements to prevent jitter
                 if (moveDir.sqrMagnitude > 0.01f)
                 {
                     Quaternion targetRotation = Quaternion.LookRotation(moveDir);
-                    transform.rotation = Quaternion.Slerp(
-                        transform.rotation, 
-                        targetRotation, 
-                        Time.deltaTime * 5f
-                    );
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
                 }
             }
-            // When we arrive at investigation point
-            if (!agent.pathPending && agent.remainingDistance < 1.0f)
+
+            // --------------------------------------------------------------------------
+            // 4. ARRIVAL PHASE: Wait and Scan
+            // --------------------------------------------------------------------------
+            
+            // Check if we have reached the destination
+            // (pathPending check handles the frame lag before path calculation finishes)
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
             {
+                // Increment the timer while standing still
                 investigateTimer += Time.deltaTime;
-                              
-                // After waiting, transition to search or patrol
+                
+                // Optional: Add a subtle look-around animation/rotation here
+                // transform.Rotate(0, Mathf.Sin(Time.time * 2f) * 0.3f, 0); 
+
+                // If we have waited long enough
                 if (investigateTimer >= investigateWaitTime)
                 {
+                    // Transition Logic:
+                    // If we still suspect a threat (Confidence > 0.1), try to Search (predictive)
                     if (perception.CurrentThreat != null && perception.CurrentThreat.ConfidenceNow > 0.1f)
                     {
                         ChangeState(State.Search);
                     }
+                    // If completely lost, give up and Patrol
                     else
                     {
-                        // Lost them completely, return to patrol
-                        perception.alertness = 0f;
+                        perception.alertness = 0f; // Reset alertness
                         ChangeState(State.Patrol);
                     }
                 }
             }
         }
+
         
         private void ExecuteCombat()
         {

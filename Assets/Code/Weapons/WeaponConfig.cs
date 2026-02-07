@@ -21,5 +21,8 @@ namespace MyGame
         [Header("Range")]
         [Tooltip("Maximum distance for accurate hitscan.")]
         public float maxDistance = 500f;
+        [Header("Sound")]
+        public float gunshotSoundIntensity = 1f;
+        public float gunshotSoundRange = 45f;
     }
 }

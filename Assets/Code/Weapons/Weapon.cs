@@ -36,6 +36,13 @@ namespace MyGame
         [Tooltip("Force applied to rigidbodies when a shot hits. If a WeaponConfig is assigned, this will be overridden by config.impactForce at runtime.")]
         [SerializeField] private float impactForce = 30f;
 
+        [Header("AI Hearing")]
+        [Tooltip("How loud this weapon is to AI hearing (0-1). Pistols lower, shotguns higher.")]
+        [SerializeField, Range(0f, 1f)] private float gunshotSoundIntensity = 1f;
+
+        [Tooltip("How far this weapon's gunshot can be heard by AI.")]
+        [SerializeField, Min(0f)] private float gunshotSoundRange = 45f;
+
         [Header("Animation")]
         [Tooltip("Transform that represents the weapon's ejection port, meaning the part of the weapon that casings shoot from.")]
         [SerializeField] private Transform socketEjection;
@@ -120,10 +127,12 @@ namespace MyGame
                 damage = weaponConfig.baseDamage;
                 impactForce = weaponConfig.impactForce;
                 maximumDistance = weaponConfig.maxDistance;
+                gunshotSoundIntensity = weaponConfig.gunshotSoundIntensity;
+                gunshotSoundRange = weaponConfig.gunshotSoundRange;
 
                 // Optional debugging
                 Debug.Log($"[Weapon] {name} using WeaponConfig '{weaponConfig.displayName}' " +
-                          $"(damage={damage}, force={impactForce}, maxDistance={maximumDistance})");
+                          $"(damage={damage}, force={impactForce}, maxDistance={maximumDistance}, soundIntensity={gunshotSoundIntensity}, soundRange={gunshotSoundRange})");
             }
 
             // Get attachments.
@@ -206,7 +215,10 @@ namespace MyGame
             );
 
             muzzleBehaviour.Effect();
-            soundEmitter.EmitGunshot();
+            if (soundEmitter != null)
+            {
+                soundEmitter.EmitGunshot(gunshotSoundIntensity, gunshotSoundRange);
+            }
 
             Quaternion rotation =
                 Quaternion.LookRotation(playerCamera.forward * 1000.0f - muzzleSocket.position);
