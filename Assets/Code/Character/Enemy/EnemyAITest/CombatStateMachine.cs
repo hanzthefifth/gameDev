@@ -25,8 +25,9 @@ namespace EnemyAI.Complete
         
         [Header("State Settings")]
         [SerializeField] private float searchDuration = 4.0f;
+        [SerializeField] private float minSearchTime = 1.0f; // NEW
         [SerializeField] private float investigateWaitTime = 1.5f; //wait/look around time when arriving at last seen point befor switching to search/patrol
-        [SerializeField] private float combatToInvestigateDelay = 0.5f; // NEW: Hysteresis
+        //[SerializeField] private float combatToInvestigateDelay = 0.5f; // NEW: Hysteresis, not working yet
         
         [Header("Stuck Detection")]
         [SerializeField] private float stuckSpeedThreshold = 0.05f; //im trying to move but nearly not moving, speed cutoff
@@ -74,6 +75,35 @@ namespace EnemyAI.Complete
         private State DetermineState()
         {
             // State selection logic based on perception
+            // --- Soft lock for Search ---
+            if (currentState == State.Search)
+            {
+                // 1) Reacquired strong LOS? Go straight back to Combat.
+                if (perception.HasThreat && perception.CurrentThreat.hasVisualContact)
+                {
+                    return State.Combat;
+                }
+
+                // 2) Haven't searched long enough? Stay in Search no matter what.
+                if (searchTimer < minSearchTime)
+                {
+                    return State.Search;
+                }
+
+                // 3) Still within overall searchDuration and still have some memory?
+                if (searchTimer < searchDuration &&
+                    perception.HasThreat &&
+                    perception.CurrentThreat.ConfidenceNow > 0.05f)
+                {
+                    return State.Search;
+                }
+
+                // If we get here:
+                // - Either searchTimer >= searchDuration, or
+                // - We've totally lost threat memory
+                // fall through to "normal" logic to decide next state.
+            }
+            // ---------------------------------
             
             if (perception.HasThreat)
             {
@@ -122,6 +152,7 @@ namespace EnemyAI.Complete
             currentState = newState;
             OnEnterState(newState);
         }
+
         
         private void OnEnterState(State state)
         {
@@ -239,9 +270,7 @@ namespace EnemyAI.Complete
             if (!agent.pathPending && agent.remainingDistance < 1.0f)
             {
                 investigateTimer += Time.deltaTime;
-                
-                // No extra rotation needed; vision cone handles scanning
-                
+                              
                 // After waiting, transition to search or patrol
                 if (investigateTimer >= investigateWaitTime)
                 {
@@ -290,8 +319,6 @@ namespace EnemyAI.Complete
         private void ExecuteSearch()
         {
             searchTimer += Time.deltaTime;
-            
-            // No extra look-around rotation; wide cone handles search
             
             // Face movement direction while moving (for natural look)
             if (agent.velocity.magnitude > 0.1f)

@@ -292,7 +292,9 @@ namespace EnemyAI.Complete{
                     confidence = confidence,
                     lastUpdateTime = Time.time,
                     hasVisualContact = visual,
-                    estimatedVelocity = Vector3.zero
+                    estimatedVelocity = Vector3.zero,
+                    //adding
+                    seenThisFrame = true
                 };
 
                 threats[target].ConfigurePrediction(threatPredictionLookAheadTime, positionSampleBufferSize);

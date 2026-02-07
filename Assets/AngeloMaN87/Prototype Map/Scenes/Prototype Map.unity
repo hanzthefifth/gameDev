@@ -1679,9 +1679,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5f0ce84feb98d4db017ab972eb18f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI.Complete.CombatStateMachine
-  searchDuration: 5
+  searchDuration: 8
+  minSearchTime: 5
   investigateWaitTime: 1.5
-  combatToInvestigateDelay: 0.5
   stuckSpeedThreshold: 0.05
   stuckTimeToReset: 1.5
 --- !u!114 &1217805516

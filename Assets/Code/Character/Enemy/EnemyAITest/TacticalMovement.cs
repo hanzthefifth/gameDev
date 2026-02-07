@@ -34,7 +34,7 @@ namespace EnemyAI.Complete
 
         [Header("Reposition Timing")]
         [SerializeField]
-        private float repositionInterval = 3f;      // how often we consider moving again
+        private float repositionInterval = 3f;      // ai must wait minimum time before repositioning again
 
         [SerializeField, Tooltip("How far from preferredDistance we allow before we consider ourselves 'good enough' to stand and shoot.")]
         private float distanceTolerance = 2f;       // band around preferredDistance where we hold position
@@ -53,6 +53,8 @@ namespace EnemyAI.Complete
         private float nextRepositionTime;
         private float nextStrafeTime = 0f;
         private float currentStrafeEndTime = 0f;
+        private float currentStrafeBurstDistance = 0f;
+        private float currentStrafeMovedDistance = 0f;
         private int strafeDirection = 0; // -1 = left, +1 = right
     
 
@@ -109,8 +111,11 @@ namespace EnemyAI.Complete
             // 2) Too far: simple chase until we get into a rough band around preferredDistance.
             if (distanceToThreat > preferredDistance + simpleChaseExtraRange)
             {
-                agent.isStopped = false;
-                agent.SetDestination(threat.target.position);
+                if (threat.target != null)
+                {
+                    agent.isStopped = false;
+                    agent.SetDestination(threat.target.position);
+                }
                 FaceDirection(toTarget);
                 return;
             }
@@ -333,10 +338,13 @@ namespace EnemyAI.Complete
             if (!enableStrafe || threat == null || threat.target == null)
                 return;
 
-            // // Optional: only strafe when nicely within the band, not at the edges
-            // float distOffset = Mathf.Abs(distanceToThreat - preferredDistance);
-            // if (distOffset > distanceTolerance * 0.5f)
-            //     return;
+            if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+                return;
+
+            // Only strafe when we're close to our preferred combat range.
+            float distOffset = Mathf.Abs(distanceToThreat - preferredDistance);
+            if (distOffset > distanceTolerance)
+                return;
 
             // Time-based burst strafing
             float time = Time.time;
@@ -349,11 +357,17 @@ namespace EnemyAI.Complete
 
                 // Start a new strafe burst
                 strafeDirection = (Random.value < 0.5f) ? -1 : 1;
+                currentStrafeBurstDistance = Mathf.Max(0f, strafeDistance);
+                currentStrafeMovedDistance = 0f;
 
-                float duration = Random.Range(minStrafeDuration, maxStrafeDuration);
+                float minDuration = Mathf.Min(minStrafeDuration, maxStrafeDuration);
+                float maxDuration = Mathf.Max(minStrafeDuration, maxStrafeDuration);
+                float duration = Random.Range(minDuration, maxDuration);
                 currentStrafeEndTime = time + duration;
 
-                float pause = Random.Range(minStrafePause, maxStrafePause);
+                float minPause = Mathf.Min(minStrafePause, maxStrafePause);
+                float maxPause = Mathf.Max(minStrafePause, maxStrafePause);
+                float pause = Random.Range(minPause, maxPause);
                 nextStrafeTime = currentStrafeEndTime + pause;
             }
 
@@ -367,15 +381,18 @@ namespace EnemyAI.Complete
             Vector3 right = new Vector3(forwardToTarget.z, 0, -forwardToTarget.x); // perpendicular on XZ
 
             // Compute a small step this frame
-            Vector3 step = right * (strafeDirection * strafeSpeed * Time.deltaTime);
+            float frameDistanceBudget = strafeSpeed * Time.deltaTime;
+            float remainingBurstDistance = currentStrafeBurstDistance - currentStrafeMovedDistance;
+            float moveDistance = Mathf.Min(frameDistanceBudget, Mathf.Max(0f, remainingBurstDistance));
 
-            // Clamp so we don't exceed strafeDistance from our original line
-            // (you can make this more precise if needed, this is a simple version)
-            if (step.sqrMagnitude > 0f)
-            {
-                // Try moving using NavMeshAgent.Move so we don't touch SetDestination
-                agent.Move(step);
-            }
+            if (moveDistance <= 0f)
+                return;
+
+            Vector3 step = right * (strafeDirection * moveDistance);
+
+            // Try moving using NavMeshAgent.Move so we don't touch SetDestination
+            agent.Move(step);
+            currentStrafeMovedDistance += moveDistance;
         }
 
 
