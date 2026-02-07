@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Game
+namespace MyGame
 {
     public static class LoopUtils
     {

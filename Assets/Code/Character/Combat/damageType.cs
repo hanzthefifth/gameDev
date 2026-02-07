@@ -1,4 +1,4 @@
-namespace Game
+namespace MyGame
 {
     public enum DamageType
     {

@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Weapon Attachment Manager Behaviour.

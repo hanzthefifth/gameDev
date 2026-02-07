@@ -3,7 +3,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Time Manager.

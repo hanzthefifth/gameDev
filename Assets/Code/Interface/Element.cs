@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game.Interface
+namespace MyGame.Interface
 {
     /// <summary>
     /// Interface Element.
@@ -12,7 +12,7 @@ namespace Game.Interface
         #region FIELDS
         
         /// <summary>
-        /// Game Mode Service.
+        /// MyGame Mode Service.
         /// </summary>
         protected IGameModeService gameModeService;
         
@@ -39,7 +39,7 @@ namespace Game.Interface
         /// </summary>
         protected virtual void Awake()
         {
-            //Get Game Mode Service. Very useful to get Game Mode references.
+            //Get MyGame Mode Service. Very useful to get MyGame Mode references.
             gameModeService = ServiceLocator.Current.Get<IGameModeService>();
             
             //Get Player Character.

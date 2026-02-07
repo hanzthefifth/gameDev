@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Muzzle.

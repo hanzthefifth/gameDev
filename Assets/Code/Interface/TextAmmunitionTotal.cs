@@ -2,7 +2,7 @@
 
 using System.Globalization;
 
-namespace Game.Interface
+namespace MyGame.Interface
 {
     /// <summary>
     /// Total Ammunition Text.

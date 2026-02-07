@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game.Interface
+namespace MyGame.Interface
 {
     /// <summary>
     /// Crosshair.

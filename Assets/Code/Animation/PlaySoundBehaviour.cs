@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Play Sound Behaviour. Plays an AudioClip using our custom AudioManager!
@@ -22,7 +22,7 @@ namespace Game
         private AudioSettings settings = new AudioSettings(1.0f, 0.0f, true);
 
         /// <summary>
-        /// Audio Manager Service. Handles all Game audio.
+        /// Audio Manager Service. Handles all MyGame audio.
         /// </summary>
         private IAudioManagerService audioManagerService;
 

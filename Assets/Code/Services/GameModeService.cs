@@ -1,9 +1,9 @@
 ﻿// Copyright 2021, Infima Games. All Rights Reserved.
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
-    /// Game Mode Service.
+    /// MyGame Mode Service.
     /// </summary>
     public class GameModeService : IGameModeService
     {

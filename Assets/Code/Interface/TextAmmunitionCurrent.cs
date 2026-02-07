@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Globalization;
 
-namespace Game.Interface
+namespace MyGame.Interface
 {
     /// <summary>
     /// Current Ammunition Text.

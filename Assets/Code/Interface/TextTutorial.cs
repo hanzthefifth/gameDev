@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace Game.Interface
+namespace MyGame.Interface
 {
     /// <summary>
     /// Interface component that hides or shows the tutorial text based on input.

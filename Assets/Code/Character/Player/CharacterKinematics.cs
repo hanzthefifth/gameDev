@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Handles all the Inverse Kinematics needed for our Character.

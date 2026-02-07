@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Helper StateMachineBehaviour that allows us to more easily play a specific weapon sound.

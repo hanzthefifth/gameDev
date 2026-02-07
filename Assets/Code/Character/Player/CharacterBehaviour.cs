@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     public abstract class CharacterBehaviour : MonoBehaviour
     {

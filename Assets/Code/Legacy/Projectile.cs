@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
-using Game;
+using MyGame;
 using Random = UnityEngine.Random;
 
 public class Projectile : MonoBehaviour {
@@ -24,7 +24,7 @@ public class Projectile : MonoBehaviour {
 
 	private void Start ()
 	{
-		//Grab the Game mode service, we need it to access the player character!
+		//Grab the MyGame mode service, we need it to access the player character!
 		var gameModeService = ServiceLocator.Current.Get<IGameModeService>();
 		//Ignore the main player character's collision. A little hacky, but it should work.
 		Physics.IgnoreCollision(gameModeService.GetPlayerCharacter().GetComponent<Collider>(), GetComponent<Collider>());

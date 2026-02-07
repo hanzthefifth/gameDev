@@ -1,7 +1,7 @@
 ﻿﻿using System;
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     public static class Log
     {

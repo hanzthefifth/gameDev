@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Audio Settings used to interact with the AudioManagerService.

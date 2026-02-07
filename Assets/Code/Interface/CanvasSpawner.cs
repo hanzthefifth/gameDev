@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Game.Interface
+namespace MyGame.Interface
 {
     /// Player UI.
     public class CanvasSpawner : MonoBehaviour

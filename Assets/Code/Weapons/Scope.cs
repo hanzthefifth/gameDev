@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Weapon Scope.

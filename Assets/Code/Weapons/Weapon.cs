@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using EnemyAI.Complete;
 
-namespace Game
+namespace MyGame
 {
     /// Weapon. This class handles most of the things that weapons need.
     public class Weapon : WeaponBehaviour
@@ -88,6 +89,7 @@ namespace Game
         private IGameModeService gameModeService;
         private CharacterBehaviour characterBehaviour;
         private Transform playerCamera;
+        private SoundEmitter soundEmitter;
 
         #endregion
 
@@ -99,8 +101,9 @@ namespace Game
             animator = GetComponent<Animator>();
             //Get Attachment Manager.
             attachmentManager = GetComponent<WeaponAttachmentManagerBehaviour>();
+            soundEmitter = GetComponent<SoundEmitter>();
 
-            //Cache the Game mode service.
+            //Cache the MyGame mode service.
             gameModeService = ServiceLocator.Current.Get<IGameModeService>();
             //Cache the player character.
             characterBehaviour = gameModeService.GetPlayerCharacter();
@@ -183,6 +186,7 @@ namespace Game
             animator.Play(HasAmmunition() ? "Reload" : "Reload Empty", 0, 0.0f);
         }
 
+
         public override void Fire(float spreadMultiplier = 1.0f)
         {
             if (muzzleBehaviour == null)
@@ -202,6 +206,7 @@ namespace Game
             );
 
             muzzleBehaviour.Effect();
+            soundEmitter.EmitGunshot();
 
             Quaternion rotation =
                 Quaternion.LookRotation(playerCamera.forward * 1000.0f - muzzleSocket.position);
@@ -226,6 +231,14 @@ namespace Game
             if (damageable != null)
             {
                 damageable.TakeDamage(damage);
+                CombatAI enemyAI = hit.collider.GetComponentInParent<CombatAI>();
+                Debug.Log($"3. Found CombatAI: {enemyAI != null}");
+            
+                if (enemyAI != null)
+                {
+                    enemyAI.OnTakeDamage(damage, transform.position, transform);
+                    Debug.Log("4. Called OnTakeDamage!");
+                }
 
                 // Later you can route type too if you extend IDamageable:
                 // damageable.TakeDamage(damage, weaponConfig?.damageType ?? DamageType.Bullet);

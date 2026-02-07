@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game
+namespace MyGame
 {
     public class StaminaUI : MonoBehaviour
     {

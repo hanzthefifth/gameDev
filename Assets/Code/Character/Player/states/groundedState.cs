@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     /// Handles locomotion when the character is on the ground.
     /// Manages ground friction, acceleration, and landing penalties.

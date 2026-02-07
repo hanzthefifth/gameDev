@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Bootstraper.
@@ -18,7 +18,7 @@ namespace Game
             //Initialize default service locator.
             ServiceLocator.Initialize();
             
-            //Game Mode Service.
+            //MyGame Mode Service.
             ServiceLocator.Current.Register<IGameModeService>(new GameModeService());
             
             #region Sound Manager Service

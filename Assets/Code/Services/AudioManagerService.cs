@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Manages the spawning and playing of sounds.
@@ -50,7 +50,7 @@ namespace Game
             //Wait for the audio source to complete playing the clip.
             yield return new WaitWhile(() => source.isPlaying);
             
-            //Destroy the audio Game object, since we're not using it anymore.
+            //Destroy the audio MyGame object, since we're not using it anymore.
             //This isn't really too great for performance, but it works, for now.
             DestroyImmediate(source.gameObject);
         }
@@ -75,7 +75,7 @@ namespace Game
             if (clip == null)
                 return;
             
-            //Spawn a Game object for the audio source.
+            //Spawn a MyGame object for the audio source.
             var newSourceObject = new GameObject($"Audio Source -> {clip.name}");
             //Add an audio source component to that object.
             var newAudioSource = newSourceObject.AddComponent<AudioSource>();

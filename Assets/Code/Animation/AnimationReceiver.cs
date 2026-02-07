@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
 	/// <summary>
 	/// This class is helpful when adding weapons alone in the scene that are playing animations.

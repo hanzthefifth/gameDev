@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     /// <summary>
     /// Abstract Inventory Class. Helpful so you can implement your own inventory system!
@@ -37,10 +37,10 @@ namespace Game
         #region METHODS
 
         /// <summary>
-        /// Init. This function is called when the Game starts. We don't use Awake or Start because we need the
+        /// Init. This function is called when the MyGame starts. We don't use Awake or Start because we need the
         /// PlayerCharacter component to run this with the index it wants to equip!
         /// </summary>
-        /// <param name="equippedAtStart">Inventory index of the weapon we want to equip when the Game starts.</param>
+        /// <param name="equippedAtStart">Inventory index of the weapon we want to equip when the MyGame starts.</param>
         public abstract void Init(int equippedAtStart = 0);
         
         /// <summary>

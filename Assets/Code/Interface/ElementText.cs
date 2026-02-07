@@ -3,7 +3,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Game.Interface
+namespace MyGame.Interface
 {
     /// <summary>
     /// Text Interface Element.

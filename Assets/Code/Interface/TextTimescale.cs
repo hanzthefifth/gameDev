@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Game.Interface
+namespace MyGame.Interface
 {
     /// <summary>
     /// Component that changes a text to match the current time scale.

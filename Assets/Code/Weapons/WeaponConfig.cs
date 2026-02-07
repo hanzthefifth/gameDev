@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game
+namespace MyGame
 {
     [CreateAssetMenu(
         menuName = "FPS/Weapon Config",

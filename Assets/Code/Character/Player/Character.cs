@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 
-namespace Game
+namespace MyGame
 {
     public sealed class Character : CharacterBehaviour
     {
