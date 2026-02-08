@@ -18,3 +18,5 @@ MonoBehaviour:
   damageType: 0
   impactForce: 30
   maxDistance: 500
+  gunshotSoundIntensity: 8
+  gunshotSoundRange: 30

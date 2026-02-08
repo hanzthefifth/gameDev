@@ -586,7 +586,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3789071275776156696, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 19.67
+      value: 9.35
       objectReference: {fileID: 0}
     - target: {fileID: 3789071275776156696, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -594,7 +594,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3789071275776156696, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -45.98
+      value: -35.16
       objectReference: {fileID: 0}
     - target: {fileID: 3789071275776156696, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_LocalRotation.w
@@ -842,6 +842,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7838129994979745922, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8034118848636396677, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: weaponConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 629dd7b801a5aa34d9bf650314fb2cdc, type: 2}
+    - target: {fileID: 8034118848636396677, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: gunshotSoundIntensity
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8243848772886604964, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
@@ -1457,8 +1465,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI.Complete.SoundEmitter
   debugSounds: 0
-  defaultGunshotIntensity: 10
-  defaultGunshotRange: 30
 --- !u!144 &983229910
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -2069,6 +2075,7 @@ MonoBehaviour:
   searchVisionAngle: 200
   visionAngleTransitionSpeed: 2
   alertness: 0
+  lastHeardSoundTime: -999
   soundMemoryDuration: 4
 --- !u!114 &1217805517
 MonoBehaviour:
@@ -2263,6 +2270,7 @@ MonoBehaviour:
   searchVisionAngle: 200
   visionAngleTransitionSpeed: 2
   alertness: 0
+  lastHeardSoundTime: -999
   soundMemoryDuration: 4
 --- !u!54 &1364780964
 Rigidbody:

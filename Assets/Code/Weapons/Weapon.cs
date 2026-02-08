@@ -215,9 +215,11 @@ namespace MyGame
             );
 
             muzzleBehaviour.Effect();
-            if (soundEmitter != null)
+            // FIX: Pass actual config values to the emitter
+            if (soundEmitter != null && weaponConfig != null)
             {
-                soundEmitter.EmitGunshot(gunshotSoundIntensity, gunshotSoundRange);
+                // If weaponConfig.soundIntensity is 0, the AI will now ignore it
+                soundEmitter.EmitGunshot(weaponConfig.gunshotSoundIntensity, weaponConfig.gunshotSoundRange);
             }
 
             Quaternion rotation =
