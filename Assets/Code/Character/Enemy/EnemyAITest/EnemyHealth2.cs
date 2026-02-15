@@ -50,6 +50,8 @@ public class EnemyHealth2 : MonoBehaviour, IDamageable
         role          = GetComponent<RoleProfile>();
     }
 
+
+
     public void TakeDamage(float amount)
     {
         if (isDead)
@@ -62,6 +64,7 @@ public class EnemyHealth2 : MonoBehaviour, IDamageable
             Die();
         }
     }
+
 
     private void Die()
     {

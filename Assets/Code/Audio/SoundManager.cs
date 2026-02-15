@@ -45,10 +45,12 @@ namespace EnemyAI.Complete
             if (!listeners.Contains(listener))
             {
                 listeners.Add(listener);
+                Debug.Log($"[SoundManager] Registered listener: {listener.name}");
+
             }
         }
         
-        /// <summary>
+        /// <summary>..
         /// Unregister an AI perception system (called when AI is destroyed)
         /// </summary>
         public void UnregisterListener(PerceptionSystem listener)

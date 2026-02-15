@@ -10,19 +10,19 @@ namespace EnemyAI.Complete
     
     public class RoleProfile : MonoBehaviour
     {
-        public enum Role { Aggressive, Balanced, Defensive, Sniper }
+        public enum Role { Aggressive, Balanced, Defensive, Sniper, Melee }
         
         [SerializeField] private Role role = Role.Balanced;
         [Header("Capabilities")]
-        // [SerializeField] private bool hasMeleeAttack = true;
-        // [SerializeField] private bool hasRangedAttack = true;
+        [SerializeField] private bool hasMeleeAttack = true;
+        [SerializeField] private bool hasRangedAttack = true;
         // [SerializeField] private bool canReposition = true;
 
         
         public float PreferredRange { get; private set; }
         public float RepositionFrequency { get; private set; }
-        // public bool CanMelee => hasMeleeAttack;
-        // public bool CanShoot => hasRangedAttack;
+        public bool CanMelee => hasMeleeAttack;
+        public bool CanShoot => hasRangedAttack;
         // public bool CanReposition => canReposition;
         
         private void Awake()
@@ -40,7 +40,7 @@ namespace EnemyAI.Complete
                     break;
                 
                 case Role.Balanced:
-                    PreferredRange = 12f;
+                    PreferredRange = 15f;
                     RepositionFrequency = 3f;
                     break;
                 
@@ -52,6 +52,13 @@ namespace EnemyAI.Complete
                 case Role.Sniper:
                     PreferredRange = 20f;
                     RepositionFrequency = 8f;
+                    break;
+
+                case Role.Melee:
+                    PreferredRange = 1.2f;
+                    RepositionFrequency = 1f;
+                    hasMeleeAttack = true;
+                    hasRangedAttack = false;
                     break;
             }
         }

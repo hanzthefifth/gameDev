@@ -124,6 +124,7 @@
     <Compile Include="Assets\Code\Character\Enemy\ClickMove.cs" />
     <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\RoleProfile.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
+    <Compile Include="Assets\Animations\Kevin Iglesias\Human Animations\Scripts\SpineProxy.cs" />
     <Compile Include="Assets\Code\Interface\StaminaUI.cs" />
     <Compile Include="Assets\Code\Interface\Element.cs" />
     <Compile Include="Assets\Code\Services\AudioManagerService.cs" />
@@ -159,7 +160,6 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\Code\Utilities\UtilitiesArrays.cs" />
     <Compile Include="Assets\Code\Interface\TextTutorial.cs" />
-    <Compile Include="Assets\Kevin Iglesias\Human Animations\Scripts\SpineProxy.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Code\Character\Player\InventoryBehaviour.cs" />
     <Compile Include="Assets\Code\Utilities\TimeHandler.cs" />

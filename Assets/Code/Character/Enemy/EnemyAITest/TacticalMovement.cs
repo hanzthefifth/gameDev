@@ -14,33 +14,27 @@ namespace EnemyAI.Complete
         private RoleProfile role;
 
         [Header("Movement Settings")]
-        [SerializeField]
-        private float preferredDistance = 12f;      // ideal combat radius
+        [SerializeField] private float preferredDistance = 12f;      // ideal combat radius
 
-        [SerializeField]
-        private int sampleCount = 12;               // number of candidate spots per reposition
+        [SerializeField] private int sampleCount = 12;               // number of candidate spots per reposition
+        [SerializeField] private float sampleRadius = 6f;            // how far samples are from current position
+        [SerializeField] private float minSampleRadius = 0.5f;
 
-        [SerializeField]
-        private float sampleRadius = 6f;            // how far samples are from current position
+        [SerializeField, Range(0f, 1f)] private float predictionConfidenceThreshold = 0.7f;
 
-        [SerializeField, Range(0f, 1f)]
-        private float predictionConfidenceThreshold = 0.7f;
-
-        [SerializeField]
-        private float minDistanceFromTarget = 3.0f; // never pick positions closer than this to player
+        [SerializeField] private float minDistanceFromTarget = 3.0f; // never pick positions closer than this to player
 
         [SerializeField, Tooltip("Max angle (deg) to either side of the forward-to-target direction allowed for samples. 180 = full ring.")]
         private float maxSampleSideAngle = 130f;    // restrict sampling arc so we don't pick points fully behind us
 
         [Header("Reposition Timing")]
-        [SerializeField]
-        private float repositionInterval = 3f;      // ai must wait minimum time before repositioning again
+        [SerializeField] private float repositionInterval = 3f;      // ai must wait minimum time before repositioning again
 
         [SerializeField, Tooltip("How far from preferredDistance we allow before we consider ourselves 'good enough' to stand and shoot.")]
         private float distanceTolerance = 2f;       // band around preferredDistance where we hold position
 
         [SerializeField, Tooltip("If farther than this past preferredDistance, we just run straight toward the player instead of sampling.")]
-        private float simpleChaseExtraRange = 6f;   // how much farther than preferred before we use simple chase
+        private float simpelChaseRange = 6f;   // how much farther than preferred before we use simple chase
         [Header("Micro-Strafe Settings")]
         [SerializeField] private bool enableStrafe = true;
         [SerializeField] private float strafeSpeed = 3.0f;
@@ -68,6 +62,9 @@ namespace EnemyAI.Complete
             {
                 preferredDistance = role.PreferredRange;
                 repositionInterval = role.RepositionFrequency;
+                Debug.Log($"[TacticalMovement] {name} init: role={role}, preferredDistance={preferredDistance}");
+
+
             }
         }
 
@@ -109,7 +106,7 @@ namespace EnemyAI.Complete
             }
 
             // 2) Too far: simple chase until we get into a rough band around preferredDistance.
-            if (distanceToThreat > preferredDistance + simpleChaseExtraRange)
+            if (distanceToThreat > preferredDistance + simpelChaseRange)
             {
                 if (threat.target != null)
                 {
@@ -183,7 +180,7 @@ namespace EnemyAI.Complete
             for (int i = 0; i < sampleCount; i++)
             {
                 float angle = (i / (float)sampleCount) * 360f * Mathf.Deg2Rad;
-                float radius = Random.Range(3f, sampleRadius);
+                float radius = Random.Range(minSampleRadius, sampleRadius);
 
                 Vector3 offset = new Vector3(
                     Mathf.Cos(angle) * radius,
@@ -245,16 +242,16 @@ namespace EnemyAI.Complete
 
             Vector3 dirToTarget = toTarget.normalized;
 
-            // Positive delta => we are too close and need to move away.
-            float delta = preferredDistance - currentDistance;
-
-            // How far we want to move this step
+            // // Positive delta => we are too close and need to move away.
+            float delta = currentDistance - preferredDistance;
+            // // How far we want to move this step
             float moveAmount = Mathf.Clamp(Mathf.Abs(delta), 0f, sampleRadius);
+            
 
             // Decide direction:
             // - Too close => move away from target
             // - Too far  => move toward target
-            Vector3 moveDir = (delta > 0f) ? -dirToTarget : dirToTarget;
+            Vector3 moveDir = (delta > 0f) ? dirToTarget : -dirToTarget;
 
             Vector3 desiredPos = transform.position + moveDir * moveAmount;
 

@@ -69,20 +69,26 @@ namespace EnemyAI.Complete
                 }
             }
 
-            // Wire up dependencies
-            stateMachine.Initialize(this, perception, agent);
-            movement.Initialize(agent, perception, role);
-            weapon.Initialize(transform, agent);
+            // // Wire up dependencies
+            // stateMachine.Initialize(this, perception, agent);
+            // movement.Initialize(agent, perception, role);
+            // weapon.Initialize(transform, agent);
         }
         
         private void Start()
         {
+            // Wire up dependencies
+            stateMachine.Initialize(this, perception, agent);
+            movement.Initialize(agent, perception, role);
+            weapon.Initialize(transform, agent);
+            
             // Set initial state
             if (patrolPoints != null && patrolPoints.Length > 0)
             {
                 stateMachine.StartPatrol(patrolPoints);
             }
         }
+
         
         private void Update()
         {
@@ -90,6 +96,7 @@ namespace EnemyAI.Complete
             stateMachine.Tick(); // Let state machine handle logic
             UpdateAnimations(); // Update animations
         }
+        
         
         private void UpdateAnimations()
         {

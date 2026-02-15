@@ -127,6 +127,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 761159045090740401, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 968782299064886746, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3789071275776156696, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.952272
@@ -170,6 +178,18 @@ PrefabInstance:
     - target: {fileID: 5298256239370404522, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_Name
       value: PlayerController
+      objectReference: {fileID: 0}
+    - target: {fileID: 5298256239370404522, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560740058107076931, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8655462631242990814, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -598,7 +618,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 548558449}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
@@ -658,7 +678,7 @@ MonoBehaviour:
   customPasses:
   - rid: 853226597102911575
   injectionPoint: 1
-  m_TargetCamera: {fileID: 1343011205}
+  m_TargetCamera: {fileID: 306258627}
   useTargetCamera: 1
   references:
     version: 2
@@ -779,7 +799,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1153007447}
-  - component: {fileID: 1153007446}
+  - component: {fileID: 1153007448}
   m_Layer: 0
   m_Name: CustomPassWeapon
   m_TagString: Untagged
@@ -787,43 +807,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1153007446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1153007445}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26d6499a6bd256e47b859377446493a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.CustomPassVolume
-  m_IsGlobal: 0
-  fadeRadius: 0
-  priority: 0
-  customPasses:
-  - rid: 853226597102911576
-  injectionPoint: 2
-  m_TargetCamera: {fileID: 306258627}
-  useTargetCamera: 1
-  references:
-    version: 2
-    RefIds:
-    - rid: 853226597102911576
-      type: {class: FullScreenCustomPass, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
-      data:
-        m_Name: Custom Pass
-        enabled: 1
-        targetColorBuffer: 0
-        targetDepthBuffer: 0
-        clearFlags: 0
-        passFoldout: 0
-        m_Version: 0
-        fullscreenPassMaterial: {fileID: 2100000, guid: 5d5b9f2de0067c94ca58c836c6da668d, type: 2}
-        materialPassIndex: 0
-        materialPassName: Custom Pass 0
-        fetchColorBuffer: 0
 --- !u!4 &1153007447
 Transform:
   m_ObjectHideFlags: 0
@@ -839,6 +822,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1153007448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153007445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26d6499a6bd256e47b859377446493a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.CustomPassVolume
+  m_IsGlobal: 1
+  fadeRadius: 0
+  priority: 0
+  customPasses:
+  - rid: 853226839160914004
+  injectionPoint: 1
+  m_TargetCamera: {fileID: 0}
+  useTargetCamera: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 853226839160914004
+      type: {class: FullScreenCustomPass, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
+      data:
+        m_Name: Custom Pass
+        enabled: 1
+        targetColorBuffer: 0
+        targetDepthBuffer: 0
+        clearFlags: 0
+        passFoldout: 0
+        m_Version: 0
+        fullscreenPassMaterial: {fileID: 2100000, guid: 01b49946934783741b38cc2ecd87b5ab, type: 2}
+        materialPassIndex: 0
+        materialPassName: Custom Pass 0
+        fetchColorBuffer: 0
 --- !u!1001 &1214324278
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1156,11 +1176,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 15.567155, y: 17.632938, z: 0.06691913}
   m_Center: {x: 1.0328903, y: 0.0000009235644, z: 0.02256904}
---- !u!20 &1343011205 stripped
-Camera:
-  m_CorrespondingSourceObject: {fileID: 373424225588696274, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
-  m_PrefabInstance: {fileID: 244635096}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1380366506 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9188002932708523600, guid: eeeb8101e36f7584584fca26a78c022e, type: 3}

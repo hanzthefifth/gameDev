@@ -21,7 +21,7 @@ namespace EnemyAI.Complete
 
         [Header("Melee Attack")]
         [SerializeField] private bool hasMeleeAttack = true;
-        [SerializeField] private float meleeRange = 2.2f;
+        [SerializeField] public float meleeRange = 2.2f; //switched to public
         [SerializeField] private float meleeCooldown = 1.25f;
         [SerializeField] private float meleeDamage = 15f;
 
@@ -194,8 +194,8 @@ namespace EnemyAI.Complete
                     Transform hitRoot = hit.collider.transform.root;
                     int layer = hit.collider.gameObject.layer;
 
-                    //Debug.Log($"[WeaponSystem] Raycast HIT: {hit.collider.name} " +
-                    //$"(layer: {LayerMask.LayerToName(layer)}), root: {hitRoot.name}");
+                    Debug.Log($"[WeaponSystem] Raycast HIT: {hit.collider.name} " +
+                    $"(layer: {LayerMask.LayerToName(layer)}), root: {hitRoot.name}");
                     
                     // 3. Self-hit guard (enemy shooting itself)
                         if (ownerTransform != null && hitRoot == ownerTransform.root)
@@ -225,7 +225,7 @@ namespace EnemyAI.Complete
                 }
                 else
                 {
-                    //Debug.Log("[WeaponSystem] Raycast did NOT hit anything.");
+                    Debug.Log("[WeaponSystem] Raycast did NOT hit anything.");
                 }
         }      
 
