@@ -121,7 +121,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void NotifyHealthChanged()
     {
-        float normalized = CurrentHealth / maxHealth;
+        float normalized = maxHealth > 0f ? (CurrentHealth / maxHealth) : 0f; //divide by zero edge case
         
        // Debug.Log($"[PlayerHealth] Notifying listeners - Health: {CurrentHealth:F1}/{maxHealth} (normalized: {normalized:F2})");
         

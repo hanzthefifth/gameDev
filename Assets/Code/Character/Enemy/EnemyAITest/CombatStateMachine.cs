@@ -21,7 +21,10 @@ namespace EnemyAI.Complete
         private State currentState;
         private CombatAI owner;
         private PerceptionSystem perception;
-        private NavMeshAgent agent;
+        private NavMeshAgent agent; 
+        private TacticalMovement cachedTacticalMovement; // Cached components (avoid GetComponent every frame)
+        private WeaponSystem cachedWeaponSystem;
+        private RoleProfile cachedRoleProfile;
 
         [Header("State Settings")]
         [SerializeField] private float searchDuration = 4.0f;
@@ -44,6 +47,13 @@ namespace EnemyAI.Complete
 
         public bool IsInCombat => currentState == State.Combat;
         public State CurrentState => currentState;
+
+        private void Awake()
+        {
+            cachedTacticalMovement = GetComponent<TacticalMovement>();
+            cachedWeaponSystem = GetComponent<WeaponSystem>();
+            cachedRoleProfile = GetComponent<RoleProfile>();
+        }
 
         public void Initialize(CombatAI owner, PerceptionSystem perception, NavMeshAgent agent)
         {
@@ -379,34 +389,28 @@ namespace EnemyAI.Complete
 
         private void ExecuteCombat()
         {
-            var movement = GetComponent<TacticalMovement>();
-            var weapon = GetComponent<WeaponSystem>();
-            var role = GetComponent<RoleProfile>();
-
             // Handle movement (repositioning)
-            if (movement != null)
+            if (cachedTacticalMovement != null)
             {
-                movement.UpdateCombatPosition();
+                cachedTacticalMovement.UpdateCombatPosition();
             }
             
-
-
             // Handle weapon engagement
-            if (weapon != null && perception.CurrentThreat != null && perception.CurrentThreat.hasVisualContact) //could use or's and return, then check the attack flags
+            if (cachedWeaponSystem != null && perception.CurrentThreat != null && perception.CurrentThreat.hasVisualContact) //could use or's and return, then check the attack flags
             {
                 float distance = Vector3.Distance(transform.position, perception.CurrentThreat.target.position);
                 // Debug.Log($"[Combat] {name} threatDist={distance:F1}, hasVisual={perception.CurrentThreat.hasVisualContact}");
                 // Debug.Log($"[{name}] CanShoot={role.CanShoot} CanMelee={role.CanMelee} dist={distance:F1}");
 
                 //Choose melee or ranged based on distance
-                if (role.CanMelee &&  distance <= weapon.meleeRange)
+                if (cachedRoleProfile.CanMelee &&  distance <= cachedWeaponSystem.meleeRange)
                 {
-                    weapon.EngageMelee(perception.CurrentThreat.target);
+                    cachedWeaponSystem.EngageMelee(perception.CurrentThreat.target);
                 }
-                if(role.CanShoot)
+                if(cachedRoleProfile.CanShoot)
                 {
                     //Debug.Log("[Combat] Calling EngageTarget");
-                    weapon.EngageTarget(perception.CurrentThreat);
+                    cachedWeaponSystem.EngageTarget(perception.CurrentThreat);
                 }
 
             }

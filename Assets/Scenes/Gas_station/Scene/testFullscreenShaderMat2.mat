@@ -156,7 +156,7 @@ Material:
     - _DisplacementLockObjectScale: 1
     - _DisplacementLockTilingScale: 1
     - _DisplacementMode: 0
-    - _DitheringStrength: 0.221
+    - _DitheringStrength: 0.132
     - _DoubleSidedEnable: 0
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 1
@@ -199,8 +199,8 @@ Material:
     - _PPDPrimitiveLength: 1
     - _PPDPrimitiveWidth: 1
     - _PerPixelSorting: 0
-    - _PixelationStrength: 1
-    - _QuantizeStrength: 0.312
+    - _PixelationStrength: 0.256
+    - _QuantizeStrength: 0.308
     - _RayTracing: 0
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0

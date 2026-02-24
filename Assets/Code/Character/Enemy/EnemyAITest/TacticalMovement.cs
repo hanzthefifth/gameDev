@@ -50,6 +50,16 @@ namespace EnemyAI.Complete
         private float currentStrafeBurstDistance = 0f;
         private float currentStrafeMovedDistance = 0f;
         private int strafeDirection = 0; // -1 = left, +1 = right
+
+        [SerializeField, Min(1)] private int allyOverlapBufferSize = 16;
+        private Collider[] allyOverlapBuffer;
+        private int enemyLayerMask;
+
+        private void Awake()
+        {
+            enemyLayerMask = LayerMask.GetMask("Enemy");
+            allyOverlapBuffer = new Collider[Mathf.Max(1, allyOverlapBufferSize)];
+        }
     
 
         public void Initialize(NavMeshAgent agent, PerceptionSystem perception, RoleProfile role)
@@ -291,6 +301,7 @@ namespace EnemyAI.Complete
 
             return threat.lastSeenPosition;
         }
+        
 
         private float ScorePosition(Vector3 position, Vector3 targetPosition)
         {
@@ -303,8 +314,27 @@ namespace EnemyAI.Complete
             score += distanceScore * 2f;
 
             // 2. Spacing from allies - avoid crowding
-            Collider[] nearby = Physics.OverlapSphere(position, 3f, LayerMask.GetMask("Enemy"));
-            float spacingScore = nearby.Length <= 1 ? 1f : 1f / nearby.Length;
+            //Collider[] nearby = Physics.OverlapSphere(position, 3f, LayerMask.GetMask("Enemy"));
+            //Collider[] nearby = Physics.OverlapSphereNonAlloc(position, 3f, LayerMask.GetMask("Enemy"));
+            //float spacingScore = nearby.Length <= 1 ? 1f : 1f / nearby.Length;
+            //score += spacingScore;
+
+            // 2) Spacing from allies - NON-ALLOC version
+            int nearbyCount = Physics.OverlapSphereNonAlloc(
+                position,
+                3f,
+                allyOverlapBuffer,
+                enemyLayerMask
+            );
+
+            // Optional: saturation handling (buffer full means we may have missed some colliders)
+            bool bufferSaturated = nearbyCount == allyOverlapBuffer.Length;
+            float spacingScore = nearbyCount <= 1 ? 1f : 1f / nearbyCount;
+
+            // Small penalty if saturated (keeps scoring conservative)
+            if (bufferSaturated)
+                spacingScore *= 0.9f;
+
             score += spacingScore;
 
             // 3. Line of sight - prefer positions with clear shot
@@ -315,6 +345,7 @@ namespace EnemyAI.Complete
 
             return score;
         }
+
 
         private void FaceDirection(Vector3 direction)
         {

@@ -167,9 +167,14 @@ namespace EnemyAI.Complete
         [SerializeField, Range(0f, 1f)] private float minInvestigateSoundIntensity = 0.35f;
         [SerializeField, Range(0f, 1f)] private float loudSoundThreshold = 0.6f;
 
+        [SerializeField, Min(8)] private int overlapBufferSize = 64;
+        // Reusable collider buffer to avoid allocations each scan
+        private Collider[] overlapBuffer;
+
         private Dictionary<Transform, ThreatInfo> threats =
             new Dictionary<Transform, ThreatInfo>();
         private ThreatInfo primaryThreat;
+
 
         // Dynamic vision cone tracking
         private float currentVisionAngle;
@@ -219,7 +224,7 @@ namespace EnemyAI.Complete
         // LIFECYCLE
         // ====================================================================
 
-        // private void Awake()
+        // private void Awake() why is this commented out?
         // {
         //     currentVisionAngle = relaxedVisionAngle;
         //     targetVisionAngle = relaxedVisionAngle;
@@ -249,6 +254,7 @@ namespace EnemyAI.Complete
             // Keep initialization of internal variables in Awake
             currentVisionAngle = relaxedVisionAngle;
             targetVisionAngle = relaxedVisionAngle;
+            overlapBuffer = new Collider[overlapBufferSize];
         }
 
 
@@ -324,42 +330,84 @@ namespace EnemyAI.Complete
                 kvp.Value.seenThisFrame = false;
             }
 
-            // Find potential targets in range
-            Collider[] potentials = Physics.OverlapSphere(
-                transform.position,
+            // Ensure buffer exists (prefer allocating in Awake; this is a safety fallback)
+            if (overlapBuffer == null || overlapBuffer.Length == 0)
+            {
+                int size = Mathf.Max(8, overlapBufferSize);
+                overlapBuffer = new Collider[size];
+            }
+
+            Vector3 selfPos = transform.position;
+            Vector3 selfForward = transform.forward;
+
+            // Precompute dot threshold for the current dynamic FOV
+            // angle between forward and toTarget <= currentVisionAngle/2  <=> dot >= cos(halfFov)
+            float halfFovRadians = (currentVisionAngle * 0.5f) * Mathf.Deg2Rad;
+            float minDot = Mathf.Cos(halfFovRadians);
+
+            int count = Physics.OverlapSphereNonAlloc(
+                selfPos,
                 visionRange,
-                targetLayer
+                overlapBuffer,
+                targetLayer,
+                QueryTriggerInteraction.Ignore
             );
 
-            foreach (Collider col in potentials)
+            // Optional: detect saturation (means we may have missed some colliders)
+            // bool saturated = count == overlapBuffer.Length;
+
+            Vector3 origin = selfPos + Vector3.up * 1.6f;
+
+            for (int i = 0; i < count; i++)
             {
-                Transform target = col.transform;
-
-                // Check if in DYNAMIC view cone (uses currentVisionAngle instead of fixed visionAngle)
-                Vector3 toTarget = target.position - transform.position;
-                float angle = Vector3.Angle(transform.forward, toTarget);
-
-                if (angle > currentVisionAngle * 0.5f)
+                Collider col = overlapBuffer[i];
+                if (col == null)
                     continue;
 
-                // Check line of sight
-                Vector3 origin = transform.position + Vector3.up * 1.6f;
-                Vector3 targetPoint = target.position + Vector3.up * 1.0f;
-                Vector3 direction = (targetPoint - origin).normalized;
-                float distance = Vector3.Distance(origin, targetPoint);
+                Transform target = col.transform;
+                if (target == null)
+                    continue;
+
+                Vector3 targetPos = target.position;
+
+                Vector3 toTarget = targetPos - selfPos;
+                float sqrDist = toTarget.sqrMagnitude;
+                if (sqrDist <= 0.0001f)
+                    continue;
+
+                // Dot-based cone check (no acos)
+                float invMag = 1.0f / Mathf.Sqrt(sqrDist);
+                Vector3 toTargetDir = toTarget * invMag;
+
+                float dot = Vector3.Dot(selfForward, toTargetDir);
+                if (dot < minDot)
+                    continue;
+
+                // LOS check
+                Vector3 targetPoint = targetPos + Vector3.up * 1.0f;
+                Vector3 dir = (targetPoint - origin);
+                float dist = dir.magnitude;
+
+                if (dist <= 0.01f)
+                    continue;
+
+                dir /= dist;
 
                 bool hasLOS = !Physics.Raycast(
                     origin,
-                    direction,
-                    distance,
+                    dir,
+                    dist,
                     obstacleLayer
                 );
 
                 if (hasLOS)
                 {
-                    RegisterThreat(target, target.position, 1.0f, true);
+                    RegisterThreat(target, targetPos, 1.0f, true);
                     BoostAlertness(0.5f);
                 }
+
+                // Optional: clear references so the buffer doesn't hold old colliders if count shrinks next scan
+                // overlapBuffer[i] = null;
             }
 
             // After processing potentials, anything not seen this frame loses visual
@@ -373,8 +421,8 @@ namespace EnemyAI.Complete
             }
         }
 
-        private void RegisterThreat(Transform target, Vector3 position,
-            float confidence, bool visual)
+
+        private void RegisterThreat(Transform target, Vector3 position,float confidence, bool visual)
         {
             if (!threats.ContainsKey(target))
             {

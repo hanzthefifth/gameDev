@@ -88,14 +88,16 @@ internal interface IMotionState
 
         private bool jumpRequested, isGrounded, isSprinting;
         private bool wasGroundedLastFrame = false;
+        private bool isPlayerResolved;
         private float groundSlopeAngle = 0f;
         private float lastLandTime = -999f;
         private float currentStamina;
         private CharacterBehaviour playerCharacter;
         private WeaponBehaviour equippedWeapon;
         private Vector3 groundNormal = Vector3.up;
-        public event System.Action<float, float> OnStaminaChanged; // Event fired whenever stamina changes
+        private Vector3 cachedVelocity; // States read/write Vel, uses this cache, push it to rigidbody once at the end.
 
+        public event System.Action<float, float> OnStaminaChanged; // Event fired whenever stamina changes
         public float MaxStamina => maxStamina;
         public float CurrentStamina => currentStamina;
         public float NormalizedStamina => maxStamina > 0f ? currentStamina / maxStamina : 0f;
@@ -103,52 +105,115 @@ internal interface IMotionState
 
         public Vector3 Velocity
         {
-            get => rigidBody.linearVelocity;
-            set => rigidBody.linearVelocity = value;
+            get => cachedVelocity;
+            set => cachedVelocity = value;
         }
 
         protected override void Awake()
         {
             base.Awake();
-            playerCharacter = ServiceLocator.Current.Get<IGameModeService>().GetPlayerCharacter();
+
+            // Cache required components as early as possible so states never run with null rigidbody/capsule/audio.
+            rigidBody = GetComponent<Rigidbody>();
+            capsule = GetComponent<CapsuleCollider>();
+            audioSource = GetComponent<AudioSource>();
+
+            rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
+            rigidBody.linearDamping = 0f; // allows handling of friction
+            rigidBody.useGravity = false; // for custom gravity
+
+            audioSource.clip = audioClipWalking;
+            audioSource.loop = true;
+
+            // Try to resolve player early, but DON'T assume it exists yet.
+            TryResolvePlayerCharacter();
+
             currentStamina = maxStamina;
             currentStats = baseStats;
 
             // Initialize state instances
             groundedState = new GroundedState(this);
             airborneState = new AirborneState(this);
-            
+
             // Start in grounded state
             _currentState = groundedState;
+
+            // Initialize cached velocity from rigidbody once.
+            cachedVelocity = rigidBody.linearVelocity;
+
             _currentState.Enter();
-        }
-
-
-        protected override void Start()
-        {
-            rigidBody = GetComponent<Rigidbody>();
-            rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
-            rigidBody.linearDamping = 0f; // allows handling of friction
-            rigidBody.useGravity = false; // for custom gravity
-            capsule = GetComponent<CapsuleCollider>();
-            audioSource = GetComponent<AudioSource>();
-            audioSource.clip = audioClipWalking;
-            audioSource.loop = true;
-            currentStamina = maxStamina; // start full stam
-            currentStats = baseStats;
         }
 
 
         protected override void Update()
         {
+            // If the player isn't ready yet (spawn timing / service locator timing), skip safely.
+            if (!isPlayerResolved)
+            {
+                TryResolvePlayerCharacter();
+                isPlayerResolved = playerCharacter != null;
+            }
+
+            if (!isPlayerResolved)
+                return;
+
             equippedWeapon = playerCharacter.GetInventory().GetEquipped();
 
             if (playerCharacter.GetInputJump())
                 jumpRequested = true;
 
             PlayFootstepSounds();
-            
+        } 
+
+
+        protected override void FixedUpdate()
+        {
+            // If player isn't available yet, don't simulate movement inputs.
+            // Still safe to let physics exist, but we won't read inputs or call services.
+            if (!isPlayerResolved)
+                return;
+
+            // Pull rigidbody velocity ONCE per tick into the cache.
+            cachedVelocity = rigidBody.linearVelocity;
+
+            UpdateGroundedStatus();
+
+            float dt = Time.fixedDeltaTime;
+            Vector2 moveInput = playerCharacter.GetInputMovement();
+
+            // 1. Input
+            Vector3 wishDir;
+            float inputMagnitude, forwardAmount;
+            bool hasMoveInput;
+            ComputeMovementInput(moveInput, out wishDir, out inputMagnitude, out forwardAmount, out hasMoveInput);
+
+            // 2. Sprint + stamina management
+            bool canSprint = HandleSprint(dt, hasMoveInput, forwardAmount);
+
+            // 3. Jump handling (uses jumpRequested, stamina, lockout, etc.)
+            Vector3 velocity = cachedVelocity;
+            HandleJump(canSprint, ref velocity);
+
+            // 4. Gravity
+            ApplyCustomGravity(ref velocity);
+            cachedVelocity = velocity;
+
+            // 5. STATE TRANSITIONS - grounded vs airborne
+            if (isGrounded && _currentState != groundedState)
+            {
+                SetState(groundedState);
+            }
+            else if (!isGrounded && _currentState != airborneState)
+            {
+                SetState(airborneState);
+            }
+            // 6. Execute current state movement logic
+            // States read/write Velocity which now edits cachedVelocity, not rigidBody directly.
+            _currentState.Tick(wishDir, inputMagnitude, forwardAmount, canSprint);
+            // Push final velocity to the rigidbody ONCE.
+            rigidBody.linearVelocity = cachedVelocity;
         }
+
 
         // Helper method to change stamina and fire the event
         private void SetStamina(float newValue)
@@ -163,43 +228,6 @@ internal interface IMotionState
             }
         }
 
-        protected override void FixedUpdate()
-        {
-            UpdateGroundedStatus();
-
-            float dt = Time.fixedDeltaTime;
-            Vector2 moveInput = playerCharacter.GetInputMovement();
-
-            // 1. Input
-            Vector3 wishDir; 
-            float inputMagnitude, forwardAmount;
-            bool hasMoveInput;
-            ComputeMovementInput(moveInput, out wishDir, out inputMagnitude, out forwardAmount, out hasMoveInput);
-
-            // 2. Sprint + stamina management
-            bool canSprint = HandleSprint(dt, hasMoveInput, forwardAmount);
-
-            // 3. Jump handling (uses jumpRequested, stamina, lockout, etc.)
-            Vector3 velocity = rigidBody.linearVelocity;
-            HandleJump(canSprint, ref velocity);
-
-            // 4. Gravity
-            ApplyCustomGravity(ref velocity);
-            rigidBody.linearVelocity = velocity;
-
-            // 5. STATE TRANSITIONS - grounded vs airborne
-            if (isGrounded && _currentState != groundedState)
-            {
-                SetState(groundedState);
-            }
-            else if (!isGrounded && _currentState != airborneState)
-            {
-                SetState(airborneState);
-            }
-
-            // 6. Execute current state movement logic
-            _currentState.Tick(wishDir, inputMagnitude, forwardAmount, canSprint);
-        }
 
 
          private void SetState(IMotionState next)
@@ -233,6 +261,23 @@ internal interface IMotionState
             // Forward amount (dot with character forward projected to XZ)
             Vector3 forward = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
             forwardAmount = (wishDir.sqrMagnitude > 0f) ? Vector3.Dot(wishDir, forward) : 0f;
+        }
+
+        private bool TryResolvePlayerCharacter()
+        {
+            if (playerCharacter != null)
+                return true;
+
+            var locator = ServiceLocator.Current;
+            if (locator == null)
+                return false;
+
+            var gameMode = locator.Get<IGameModeService>();
+            if (gameMode == null)
+                return false;
+
+            playerCharacter = gameMode.GetPlayerCharacter();
+            return playerCharacter != null;
         }
 
 
@@ -470,7 +515,7 @@ internal interface IMotionState
 
         private void PlayFootstepSounds()
         {
-            if (isGrounded && rigidBody.linearVelocity.sqrMagnitude > 0.1f)
+            if (isGrounded && cachedVelocity.sqrMagnitude > 0.1f)
             {
                 audioSource.clip = isSprinting ? audioClipRunning : audioClipWalking;
                 if (!audioSource.isPlaying)
@@ -481,6 +526,8 @@ internal interface IMotionState
                 audioSource.Pause();
             }
         }
+
+
         private void UpdateGroundedStatus()
         {
             Vector3 origin = transform.position + capsule.center;

@@ -1015,7 +1015,7 @@ Light:
   serializedVersion: 12
   m_Type: 1
   m_Color: {r: 0.11681201, g: 0.13121882, b: 0.14150941, a: 1}
-  m_Intensity: 50
+  m_Intensity: 0.7364121
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 0
@@ -4167,9 +4167,17 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 968782299064886746, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+    - target: {fileID: 373424225588696274, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 761159045090740401, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968782299064886746, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 968782299064886746, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: sharedProfile
@@ -4190,6 +4198,10 @@ PrefabInstance:
     - target: {fileID: 2456475165799228320, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3056670884710290093, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: volumeLayerMask.m_Bits
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3249174773400951401, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_Layer
@@ -4263,6 +4275,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerController
       objectReference: {fileID: 0}
+    - target: {fileID: 5298256239370404522, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5299513316358161717, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -4310,6 +4326,10 @@ PrefabInstance:
     - target: {fileID: 7211931484574015181, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560740058107076931, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7840742469928043286, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_Enabled
@@ -5557,7 +5577,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1586984876
 MonoBehaviour:
   m_ObjectHideFlags: 0

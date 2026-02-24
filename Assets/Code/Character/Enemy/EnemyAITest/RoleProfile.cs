@@ -14,8 +14,8 @@ namespace EnemyAI.Complete
         
         [SerializeField] private Role role = Role.Balanced;
         [Header("Capabilities")]
-        [SerializeField] private bool hasMeleeAttack = true;
-        [SerializeField] private bool hasRangedAttack = true;
+        [SerializeField] private bool hasMeleeAttack = false;
+        [SerializeField] private bool hasRangedAttack = false;
         // [SerializeField] private bool canReposition = true;
 
         
