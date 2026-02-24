@@ -5,9 +5,9 @@ using System.Globalization;
 
 namespace MyGame.Interface
 {
-    /// <summary>
+    
     /// Current Ammunition Text.
-    /// </summary>
+    
     public class TextAmmunitionCurrent : ElementText
     {
         #region FIELDS SERIALIZED
@@ -30,9 +30,9 @@ namespace MyGame.Interface
         
         #region METHODS
         
-        /// <summary>
+        
         /// Tick.
-        /// </summary>
+        
         protected override void Tick()
         {
             float current = equippedWeapon.GetAmmunitionCurrent();

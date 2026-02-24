@@ -4,23 +4,23 @@ using UnityEngine;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Audio Settings used to interact with the AudioManagerService.
-    /// </summary>
+    
     [System.Serializable]
     public struct AudioSettings
     {
-        /// <summary>
+        
         /// Automatic Cleanup Getter.
-        /// </summary>
+        
         public bool AutomaticCleanup => automaticCleanup;
-        /// <summary>
+        
         /// Volume Getter.
-        /// </summary>
+        
         public float Volume => volume;
-        /// <summary>
+        
         /// Spatial Blend Getter.
-        /// </summary>
+        
         public float SpatialBlend => spatialBlend;
 
         [Header("Settings")]
@@ -39,9 +39,9 @@ namespace MyGame
         [SerializeField]
         private float spatialBlend;
 
-        /// <summary>
+        
         /// Constructor.
-        /// </summary>
+        
         public AudioSettings(float volume = 1.0f, float spatialBlend = 0.0f, bool automaticCleanup = true)
         {
             //Volume.

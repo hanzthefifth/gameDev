@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Camera Look. Handles the rotation of the camera.
-    /// </summary>
+    
     public class CameraLook : MonoBehaviour
     {
         #region FIELDS SERIALIZED
@@ -33,22 +33,22 @@ namespace MyGame
         
         #region FIELDS
         
-        /// <summary>
+        
         /// Player Character.
-        /// </summary>
+        
         private CharacterBehaviour playerCharacter;
-        /// <summary>
+        
         /// The player character's rigidbody component.
-        /// </summary>
+        
         private Rigidbody playerCharacterRigidbody;
 
-        /// <summary>
+        
         /// The player character's rotation.
-        /// </summary>
+        
         private Quaternion rotationCharacter;
-        /// <summary>
+        
         /// The camera's rotation.
-        /// </summary>
+        
         private Quaternion rotationCamera;
 
         #endregion
@@ -115,9 +115,9 @@ namespace MyGame
 
         #region FUNCTIONS
 
-        /// <summary>
+        
         /// Clamps the pitch of a quaternion according to our clamps.
-        /// </summary>
+        
         private Quaternion Clamp(Quaternion rotation)
         {
             rotation.x /= rotation.w;

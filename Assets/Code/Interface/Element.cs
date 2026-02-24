@@ -4,39 +4,39 @@ using UnityEngine;
 
 namespace MyGame.Interface
 {
-    /// <summary>
+    
     /// Interface Element.
-    /// </summary>
+    
     public abstract class Element : MonoBehaviour
     {
         #region FIELDS
         
-        /// <summary>
+        
         /// MyGame Mode Service.
-        /// </summary>
+        
         protected IGameModeService gameModeService;
         
-        /// <summary>
+        
         /// Player Character.
-        /// </summary>
+        
         protected CharacterBehaviour playerCharacter;
-        /// <summary>
+        
         /// Player Character Inventory.
-        /// </summary>
+        
         protected InventoryBehaviour playerCharacterInventory;
 
-        /// <summary>
+        
         /// Equipped Weapon.
-        /// </summary>
+        
         protected WeaponBehaviour equippedWeapon;
         
         #endregion
 
         #region UNITY
 
-        /// <summary>
+        
         /// Awake.
-        /// </summary>
+        
         protected virtual void Awake()
         {
             //Get MyGame Mode Service. Very useful to get MyGame Mode references.
@@ -48,9 +48,9 @@ namespace MyGame.Interface
             playerCharacterInventory = playerCharacter.GetInventory();
         }
         
-        /// <summary>
+        
         /// Update.
-        /// </summary>
+        
         private void Update()
         {
             //Ignore if we don't have an Inventory.
@@ -68,9 +68,9 @@ namespace MyGame.Interface
 
         #region METHODS
 
-        /// <summary>
+        
         /// Tick.
-        /// </summary>
+        
         protected virtual void Tick() {}
 
         #endregion

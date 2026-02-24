@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Handles locomotion when the character is in the air (jumping/falling).
     /// Manages air control, speed clamping, and reduced acceleration.
-    /// </summary>
+    
     internal sealed class AirborneState : IMotionState
     {
         private readonly Movement _movement;
@@ -27,10 +27,10 @@ namespace MyGame
             // Landing effects are typically handled in GroundedState.Enter()
         }
 
-        /// <summary>
+        
         /// Called once per FixedUpdate while airborne.
         /// Handles air movement physics with reduced control and speed capping.
-        /// </summary>
+        
         public void Tick(Vector3 wishDir, float inputMagnitude, float forwardAmount, bool canSprint)
         {
             // Calculate directional speed multiplier with smooth blending

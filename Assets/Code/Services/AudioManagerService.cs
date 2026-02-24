@@ -5,32 +5,32 @@ using System.Collections;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Manages the spawning and playing of sounds.
-    /// </summary>
+    
     public class AudioManagerService : MonoBehaviour, IAudioManagerService
     {
-        /// <summary>
+        
         /// Contains data related to playing a OneShot audio.
-        /// </summary>
+        
         private readonly struct OneShotCoroutine
         {
-            /// <summary>
+            
             /// Audio Clip.
-            /// </summary>
+            
             public AudioClip Clip { get; }
-            /// <summary>
+            
             /// Audio Settings.
-            /// </summary>
+            
             public AudioSettings Settings { get; }
-            /// <summary>
+            
             /// Delay.
-            /// </summary>
+            
             public float Delay { get; }
             
-            /// <summary>
+            
             /// Constructor.
-            /// </summary>
+            
             public OneShotCoroutine(AudioClip clip, AudioSettings settings, float delay)
             {
                 //Clip.
@@ -42,9 +42,9 @@ namespace MyGame
             }
         }
 
-        /// <summary>
+        
         /// Destroys the audio source once it has finished playing.
-        /// </summary>
+        
         private IEnumerator DestroySourceWhenFinished(AudioSource source)
         {
             //Wait for the audio source to complete playing the clip.
@@ -55,9 +55,9 @@ namespace MyGame
             DestroyImmediate(source.gameObject);
         }
 
-        /// <summary>
+        
         /// Waits for a certain amount of time before starting to play a one shot sound.
-        /// </summary>
+        
         private IEnumerator PlayOneShotAfterDelay(OneShotCoroutine value)
         {
             //Wait for the delay.
@@ -66,9 +66,9 @@ namespace MyGame
             PlayOneShot_Internal(value.Clip, value.Settings);
         }
         
-        /// <summary>
+        
         /// Internal PlayOneShot. Basically does the whole function's name!
-        /// </summary>
+        
         private void PlayOneShot_Internal(AudioClip clip, AudioSettings settings)
         {
             //No need to do absolutely anything if the clip is null.

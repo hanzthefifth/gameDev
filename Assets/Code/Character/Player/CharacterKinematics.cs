@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 
 namespace MyGame
-{
-    /// <summary>
-    /// Handles all the Inverse Kinematics needed for our Character.
-    /// Very important. Uses Unity's IK code.
-    /// </summary>
+{ 
+    // Handles all the Inverse Kinematics needed for our Character.
+    // Very important. Uses Unity's IK code.   
     public class CharacterKinematics : MonoBehaviour
     {
         #region FIELDS SERIALIZED
@@ -66,31 +64,20 @@ namespace MyGame
 
         #region FIELDS
 
-        /// <summary>
-        /// Maintain Target Position Offset.
-        /// </summary>
-        private bool maintainTargetPositionOffset;
-        /// <summary>
+        
+        /// Maintain Target Position Offset.     
+        private bool maintainTargetPositionOffset;   
         /// Maintain Target Rotation Offset.
-        /// </summary>
         private bool maintainTargetRotationOffset;
-
         #endregion
         
         #region CONSTANTS
-
-        /// <summary>
         /// Constant.
-        /// </summary>
         private const float KSqrEpsilon = 1e-8f;
-
         #endregion
         
-        #region METHODS
-        
-        /// <summary>
-        /// Computes the Inverse Kinematics for both arms.
-        /// </summary>
+        #region METHODS 
+        /// Computes the Inverse Kinematics for both arms. 
         public void Compute(float weightLeft = 1.0f, float weightRight = 1.0f)
         {
             //Compute Left Arm.
@@ -103,10 +90,8 @@ namespace MyGame
                 armRightWeightPosition * weightRight, 
                 armRightWeightRotation * weightRight);
         }
-
-        /// <summary>
-        /// Computes the Inverse Kinematics for one arm, or hierarchy.
-        /// </summary>
+  
+        /// Computes the Inverse Kinematics for one arm, or hierarchy. 
         /// <param name="hierarchy">Arm Hierarchy. Root, Mid, Tip.</param>
         /// <param name="target">IK Target.</param>
         /// <param name="weightPosition">Position Weight.</param>

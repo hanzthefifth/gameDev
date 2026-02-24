@@ -25,7 +25,7 @@ namespace TMPro
         public class LinkSelectionEvent : UnityEvent<string, string, int> { }
 
 
-        /// <summary>
+        
         /// Event delegate triggered when pointer is over a character.
         /// </summary>
         public CharacterSelectionEvent onCharacterSelection
@@ -37,7 +37,7 @@ namespace TMPro
         private CharacterSelectionEvent m_OnCharacterSelection = new CharacterSelectionEvent();
 
 
-        /// <summary>
+        
         /// Event delegate triggered when pointer is over a sprite.
         /// </summary>
         public SpriteSelectionEvent onSpriteSelection
@@ -49,7 +49,7 @@ namespace TMPro
         private SpriteSelectionEvent m_OnSpriteSelection = new SpriteSelectionEvent();
 
 
-        /// <summary>
+        
         /// Event delegate triggered when pointer is over a word.
         /// </summary>
         public WordSelectionEvent onWordSelection
@@ -61,7 +61,7 @@ namespace TMPro
         private WordSelectionEvent m_OnWordSelection = new WordSelectionEvent();
 
 
-        /// <summary>
+        
         /// Event delegate triggered when pointer is over a line.
         /// </summary>
         public LineSelectionEvent onLineSelection
@@ -73,7 +73,7 @@ namespace TMPro
         private LineSelectionEvent m_OnLineSelection = new LineSelectionEvent();
 
 
-        /// <summary>
+        
         /// Event delegate triggered when pointer is over a link.
         /// </summary>
         public LinkSelectionEvent onLinkSelection

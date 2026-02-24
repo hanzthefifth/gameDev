@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Bootstraper.
-    /// </summary>
+    
     public static class Bootstraper
     {
-        /// <summary>
+        
         /// Initialize.
-        /// </summary>
+        
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Initialize()
         {

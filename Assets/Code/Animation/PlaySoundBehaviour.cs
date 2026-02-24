@@ -2,28 +2,23 @@
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Play Sound Behaviour. Plays an AudioClip using our custom AudioManager!
-    /// </summary>
     public class PlaySoundBehaviour : StateMachineBehaviour
     {
         #region FIELDS SERIALIZED
         
         [Header("Setup")]
-        
         [Tooltip("AudioClip to play!")]
-        [SerializeField]
-        private AudioClip clip;
+        [SerializeField] private AudioClip clip;
         
         [Header("Settings")]
-
         [Tooltip("Audio Settings.")]
         [SerializeField]
         private AudioSettings settings = new AudioSettings(1.0f, 0.0f, true);
 
-        /// <summary>
+        
         /// Audio Manager Service. Handles all MyGame audio.
-        /// </summary>
         private IAudioManagerService audioManagerService;
 
         #endregion

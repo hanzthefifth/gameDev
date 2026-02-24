@@ -8,18 +8,18 @@ namespace MyGame
     {
         #region FIELDS
         
-        /// <summary>
+        
         /// Array of all weapons. These are gotten in the order that they are parented to this object.
-        /// </summary>
+        
         private WeaponBehaviour[] weapons;
         
-        /// <summary>
+        
         /// Currently equipped WeaponBehaviour.
-        /// </summary>
+        
         private WeaponBehaviour equipped;
-        /// <summary>
+        
         /// Currently equipped index.
-        /// </summary>
+        
         private int equippedIndex = -1;
 
         #endregion

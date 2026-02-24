@@ -41,7 +41,7 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        
         /// Method revealing the text one character at a time.
         /// </summary>
         /// <returns></returns>
@@ -77,7 +77,7 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        
         /// Method revealing the text one word at a time.
         /// </summary>
         /// <returns></returns>

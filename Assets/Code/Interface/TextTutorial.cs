@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace MyGame.Interface
 {
-    /// <summary>
+    
     /// Interface component that hides or shows the tutorial text based on input.
-    /// </summary>
+    
     public class TextTutorial : ElementText
     {
         #region FIELDS SERIALIZED

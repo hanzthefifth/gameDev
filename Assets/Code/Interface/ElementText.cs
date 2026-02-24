@@ -5,17 +5,14 @@ using UnityEngine;
 
 namespace MyGame.Interface
 {
-    /// <summary>
+    
     /// Text Interface Element.
-    /// </summary>
+    
     [RequireComponent(typeof(TextMeshProUGUI))]
     public abstract class ElementText : Element
     {
-        #region FIELDS
-
-        /// <summary>
-        /// Text Mesh.
-        /// </summary>
+        #region FIELDS   
+        /// Text Mesh. 
         protected TextMeshProUGUI textMesh;
 
         #endregion

@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
+
 /// Attach this to any HumanoidEnemyAI to get detailed debug logging.
 /// This component monitors the AI's state and actions without modifying the AI itself.
-/// </summary>
+
 [RequireComponent(typeof(HumanoidEnemyAI))]
 public class EnemyAIDebugger : MonoBehaviour
 {

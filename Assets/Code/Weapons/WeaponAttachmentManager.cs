@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Weapon Attachment Manager. Handles equipping and storing a Weapon's Attachments.
-    /// </summary>
+    
     public class WeaponAttachmentManager : WeaponAttachmentManagerBehaviour
     {
         #region FIELDS SERIALIZED
@@ -45,26 +45,26 @@ namespace MyGame
 
         #region FIELDS
 
-        /// <summary>
+        
         /// Equipped Scope.
-        /// </summary>
+        
         private ScopeBehaviour scopeBehaviour;
-        /// <summary>
+        
         /// Equipped Muzzle.
-        /// </summary>
+        
         private MuzzleBehaviour muzzleBehaviour;
-        /// <summary>
+        
         /// Equipped Magazine.
-        /// </summary>
+        
         private MagazineBehaviour magazineBehaviour;
 
         #endregion
 
         #region UNITY FUNCTIONS
 
-        /// <summary>
+        
         /// Awake.
-        /// </summary>
+        
         protected override void Awake()
         {
             //Check if we have no scope. This could happen if we have an incorrect index.

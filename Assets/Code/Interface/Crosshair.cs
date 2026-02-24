@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace MyGame.Interface
 {
-    /// <summary>
+    
     /// Crosshair.
-    /// </summary>
+    
     public class Crosshair : Element
     {
         #region FIELDS SERIALIZED
@@ -25,18 +25,18 @@ namespace MyGame.Interface
 
         #region FIELDS
         
-        /// <summary>
+        
         /// Current.
-        /// </summary>
+        
         private float current = 1.0f;
-        /// <summary>
+        
         /// Target.
-        /// </summary>
+        
         private float target = 1.0f;
 
-        /// <summary>
+        
         /// Rect.
-        /// </summary>
+        
         private RectTransform rectTransform;
 
         #endregion

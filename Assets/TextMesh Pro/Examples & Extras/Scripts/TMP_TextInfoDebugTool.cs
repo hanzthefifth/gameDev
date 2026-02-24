@@ -93,7 +93,7 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        
         /// Method to draw a rectangle around each character.
         /// </summary>
         /// <param name="text"></param>
@@ -257,7 +257,7 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        
         /// Method to draw rectangles around each word of the text.
         /// </summary>
         /// <param name="text"></param>
@@ -361,7 +361,7 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        
         /// Draw rectangle around each of the links contained in the text.
         /// </summary>
         /// <param name="text"></param>
@@ -465,7 +465,7 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        
         /// Draw Rectangles around each lines of the text.
         /// </summary>
         /// <param name="text"></param>
@@ -546,7 +546,7 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        
         /// Draw Rectangle around the bounds of the text object.
         /// </summary>
         void DrawBounds()

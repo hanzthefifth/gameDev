@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Magazine.
-    /// </summary>
+    
     public class Magazine : MagazineBehaviour
     {
         #region FIELDS SERIALIZED
@@ -27,13 +27,13 @@ namespace MyGame
 
         #region GETTERS
 
-        /// <summary>
+        
         /// Ammunition Total.
-        /// </summary>
+        
         public override int GetAmmunitionTotal() => ammunitionTotal;
-        /// <summary>
+        
         /// Sprite.
-        /// </summary>
+        
         public override Sprite GetSprite() => sprite;
 
         #endregion

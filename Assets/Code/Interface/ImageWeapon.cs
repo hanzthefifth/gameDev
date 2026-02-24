@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 namespace MyGame.Interface
 {
-    /// <summary>
+    
     /// Weapon Image. Handles assigning the proper sprites to the weapon images.
-    /// </summary>
+    
     public class ImageWeapon : Element
     {
         #region FIELDS SERIALIZED
@@ -30,9 +30,9 @@ namespace MyGame.Interface
 
         #region FIELDS
 
-        /// <summary>
+        
         /// Weapon Attachment Manager.
-        /// </summary>
+        
         private WeaponAttachmentManagerBehaviour attachmentManagerBehaviour;
 
         #endregion
@@ -66,9 +66,9 @@ namespace MyGame.Interface
             AssignSprite(imageWeaponMagazine, sprite, magazineBehaviour == null);
         }
 
-        /// <summary>
+        
         /// Assigns a sprite to an image.
-        /// </summary>
+        
         private static void AssignSprite(Image image, Sprite sprite, bool forceHide = false)
         {
             //Update.

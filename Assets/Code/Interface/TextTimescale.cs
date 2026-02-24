@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace MyGame.Interface
 {
-    /// <summary>
+    
     /// Component that changes a text to match the current time scale.
-    /// </summary>
+    
     public class TextTimescale : ElementText
     {
         #region METHODS

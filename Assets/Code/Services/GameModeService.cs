@@ -2,16 +2,16 @@
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// MyGame Mode Service.
-    /// </summary>
+    
     public class GameModeService : IGameModeService
     {
         #region FIELDS
         
-        /// <summary>
+        
         /// The Player Character.
-        /// </summary>
+        
         private CharacterBehaviour playerCharacter;
         
         #endregion

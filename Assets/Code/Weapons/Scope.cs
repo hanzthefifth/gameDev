@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Weapon Scope.
-    /// </summary>
+    
     public class Scope : ScopeBehaviour
     {
         #region FIELDS SERIALIZED

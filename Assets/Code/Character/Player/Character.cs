@@ -1,4 +1,310 @@
-﻿using System;
+﻿// using System;
+// using UnityEngine;
+// using UnityEngine.InputSystem;
+// using System.Collections;
+
+// namespace MyGame
+// {
+//     public sealed class Character : CharacterBehaviour
+//     {
+//         // Serialized fields
+//         [Header("Inventory")][SerializeField] private InventoryBehaviour inventory;
+//         [Header("Cameras")][SerializeField] private Camera cameraWorld;
+//         [Header("Animation Procedural")][SerializeField] private Animator characterAnimator;
+//         [Header("Animation")]
+//         [SerializeField] private float dampTimeLocomotion = 0.15f;
+//         [SerializeField] private float dampTimeAiming = 0.3f;
+
+//         // Private fields
+//         private bool aiming, running, holstered;
+//         private float lastShotTime;
+//         private int layerOverlay, layerHolster, layerActions;
+//         private CharacterKinematics characterKinematics;
+//         private PlayerInput playerInput;
+//         private WeaponBehaviour equippedWeapon;
+//         private WeaponAttachmentManagerBehaviour weaponAttachmentManager;
+//         private ScopeBehaviour equippedWeaponScope;
+//         private MagazineBehaviour equippedWeaponMagazine;
+//         private bool reloading, inspecting, holstering;
+//         private Vector2 axisLook, axisMovement;
+//         private bool holdingButtonAim, holdingButtonRun, holdingButtonFire;
+//         private bool tutorialTextVisible;
+//         private bool cursorLocked;
+
+//         // Unity Methods
+//         protected override void Awake()
+//         {
+//             cursorLocked = true;
+//             UpdateCursorState();
+//             characterKinematics = GetComponent<CharacterKinematics>();
+//             playerInput = GetComponent<PlayerInput>();
+//             inventory.Init();
+//             RefreshWeaponSetup();
+//         }
+
+//         protected override void Start()
+//         {
+//             layerHolster = characterAnimator.GetLayerIndex("Layer Holster");
+//             layerActions = characterAnimator.GetLayerIndex("Layer Actions");
+//             layerOverlay = characterAnimator.GetLayerIndex("Layer Overlay");
+//         }
+
+//         protected override void Update()
+//         {
+//             aiming = holdingButtonAim && CanAim();
+//             running = holdingButtonRun && CanRun();
+
+//             if (holdingButtonFire)
+//             {
+//                 if (CanPlayAnimationFire() && equippedWeapon.HasAmmunition() && equippedWeapon.IsAutomatic())
+//                 {
+//                     if (Time.time - lastShotTime > 60.0f / equippedWeapon.GetRateOfFire())
+//                         Fire();
+//                 }
+//             }
+//             UpdateAnimator();
+//         }
+
+//         protected override void LateUpdate()
+//         {
+//             if (equippedWeapon == null || equippedWeaponScope == null)
+//                 return;
+//             if (characterKinematics != null)
+//                 characterKinematics.Compute();
+//         }
+
+//         #region GETTERS
+
+//         public override Camera GetCameraWorld() => cameraWorld;
+//         public override InventoryBehaviour GetInventory() => inventory;
+//         public override bool IsCrosshairVisible() => !aiming && !holstered;
+//         public override bool IsRunning() => running;
+//         public override bool IsAiming() => aiming;
+//         public override bool IsCursorLocked() => cursorLocked;
+//         public override bool IsTutorialTextVisible() => tutorialTextVisible;
+//         public override Vector2 GetInputMovement() => axisMovement;
+//         public override Vector2 GetInputLook() => axisLook;
+
+//         // Implement jump input using the new Input System:
+//         public override bool GetInputJump()
+//         {
+//             bool jumpTriggered = playerInput !=  null && playerInput.actions["Jump"].triggered;
+//             //Debug.Log("Jump triggered: " + jumpTriggered);
+//             return jumpTriggered;
+//         }
+
+        
+
+//         #endregion
+
+//         #region METHODS
+
+//         private void UpdateAnimator()
+//         {
+//             characterAnimator.SetFloat(Animator.StringToHash("Movement"),
+//                 Mathf.Clamp01(Mathf.Abs(axisMovement.x) + Mathf.Abs(axisMovement.y)), dampTimeLocomotion, Time.deltaTime);
+//             characterAnimator.SetFloat(Animator.StringToHash("Aiming"), Convert.ToSingle(aiming), dampTimeAiming * 0.25f, Time.deltaTime);
+//             characterAnimator.SetBool("Aim", aiming);
+//             characterAnimator.SetBool("Running", running);
+//         }
+
+//         private void RefreshWeaponSetup()
+//         {
+//             if ((equippedWeapon = inventory.GetEquipped()) == null) return;
+//             characterAnimator.runtimeAnimatorController = equippedWeapon.GetAnimatorController();
+//             weaponAttachmentManager = equippedWeapon.GetAttachmentManager();
+//             if (weaponAttachmentManager == null) return;
+//             equippedWeaponScope = weaponAttachmentManager.GetEquippedScope();
+//             equippedWeaponMagazine = weaponAttachmentManager.GetEquippedMagazine();
+//         }
+
+//         private void Fire()
+//         {
+//             lastShotTime = Time.time;
+//             equippedWeapon.Fire(); //gameplay 
+//             characterAnimator.CrossFade("Fire", 0.05f, layerOverlay, 0); //visual
+//         }
+
+//         private void FireEmpty()
+//         {
+//             lastShotTime = Time.time;
+//             characterAnimator.CrossFade("Fire Empty", 0.05f, layerOverlay, 0);
+//         }
+
+//         private void UpdateCursorState()
+//         {
+//             Cursor.visible = !cursorLocked;
+//             Cursor.lockState = cursorLocked ? CursorLockMode.Locked : CursorLockMode.None;
+//         }
+
+//         private void SetHolstered(bool value = true)
+//         {
+//             holstered = value;
+//             characterAnimator.SetBool("Holstered", holstered);
+//         }
+
+//         // Action checks (condensed)
+//         private bool CanPlayAnimationFire() => !(holstered || holstering || reloading || inspecting);
+//         private bool CanPlayAnimationReload() => !reloading && !inspecting;
+//         private bool CanPlayAnimationHolster() => !reloading && !inspecting;
+//         private bool CanChangeWeapon() => !(holstering || reloading || inspecting);
+//         private bool CanPlayAnimationInspect() => !(holstered || holstering || reloading || inspecting);
+//         private bool CanAim() => !(holstered || inspecting || reloading || holstering);
+//         // private bool CanRun() => !(inspecting || reloading || aiming || (holdingButtonFire && equippedWeapon.HasAmmunition()))
+//         //     && (axisMovement.y > 0 && Math.Abs(Mathf.Abs(axisMovement.x) - 1) >= 0.01f); //only forward sprinting
+//         private bool CanRun() => 
+//             !(inspecting || reloading || aiming || (holdingButtonFire && equippedWeapon.HasAmmunition()))
+//             && axisMovement.sqrMagnitude > 0.01f;
+
+//         #endregion
+
+//         #region INPUT METHODS
+
+//         public void OnTryFire(InputAction.CallbackContext context)
+//         {
+//             if (!cursorLocked) return;
+//             switch (context.phase)
+//             {
+//                 case InputActionPhase.Started:
+//                     holdingButtonFire = true;
+//                     break;
+//                 case InputActionPhase.Performed:
+//                     if (!CanPlayAnimationFire()) break;
+//                     if (equippedWeapon.HasAmmunition())
+//                     {
+//                         if (!equippedWeapon.IsAutomatic() && Time.time - lastShotTime > 60.0f / equippedWeapon.GetRateOfFire())
+//                             Fire();
+//                     }
+//                     else
+//                         FireEmpty();
+//                     break;
+//                 case InputActionPhase.Canceled:
+//                     holdingButtonFire = false;
+//                     break;
+//             }
+//         }
+
+//         public void OnTryPlayReload(InputAction.CallbackContext context)
+//         {
+//             if (!cursorLocked || !CanPlayAnimationReload()) return;
+//             if (context.phase == InputActionPhase.Performed)
+//                 PlayReloadAnimation();
+//         }
+
+//         public void OnTryInspect(InputAction.CallbackContext context)
+//         {
+//             if (!cursorLocked || !CanPlayAnimationInspect()) return;
+//             if (context.phase == InputActionPhase.Performed)
+//                 Inspect();
+//         }
+
+//         public void OnTryAiming(InputAction.CallbackContext context)
+//         {
+//             if (!cursorLocked) return;
+//             if (context.phase == InputActionPhase.Started)
+//                 holdingButtonAim = true;
+//             else if (context.phase == InputActionPhase.Canceled)
+//                 holdingButtonAim = false;
+//         }
+
+//         public void OnTryHolster(InputAction.CallbackContext context)
+//         {
+//             if (!cursorLocked) return;
+//             if (context.phase == InputActionPhase.Performed && CanPlayAnimationHolster())
+//             {
+//                 SetHolstered(!holstered);
+//                 holstering = true;
+//             }
+//         }
+
+//         public void OnTryRun(InputAction.CallbackContext context)
+//         {
+//             if (!cursorLocked) return;
+//             if (context.phase == InputActionPhase.Started)
+//                 holdingButtonRun = true;
+//             else if (context.phase == InputActionPhase.Canceled)
+//                 holdingButtonRun = false;
+//         }
+
+//         public void OnTryInventoryNext(InputAction.CallbackContext context)
+//         {
+//             if (!cursorLocked || inventory == null) return;
+//             if (context.phase == InputActionPhase.Performed)
+//             {
+//                 float scrollValue = context.valueType.IsEquivalentTo(typeof(Vector2))
+//                     ? Mathf.Sign(context.ReadValue<Vector2>().y)
+//                     : 1.0f;
+//                 int indexNext = scrollValue > 0 ? inventory.GetNextIndex() : inventory.GetLastIndex();
+//                 int indexCurrent = inventory.GetEquippedIndex();
+//                 if (CanChangeWeapon() && indexCurrent != indexNext)
+//                     StartCoroutine(nameof(Equip), indexNext);
+//             }
+//         }
+
+//         public void OnLockCursor(InputAction.CallbackContext context)
+//         {
+//             if (context.phase == InputActionPhase.Performed)
+//             {
+//                 cursorLocked = !cursorLocked;
+//                 UpdateCursorState();
+//             }
+//         }
+
+//         public void OnMove(InputAction.CallbackContext context) => axisMovement = cursorLocked ? context.ReadValue<Vector2>() : default;
+//         public void OnLook(InputAction.CallbackContext context) => axisLook = cursorLocked ? context.ReadValue<Vector2>() : default;
+//         public void OnUpdateTutorial(InputAction.CallbackContext context)
+//         {
+//             tutorialTextVisible = context switch
+//             {
+//                 { phase: InputActionPhase.Started } => true,
+//                 { phase: InputActionPhase.Canceled } => false,
+//                 _ => tutorialTextVisible
+//             };
+//         }
+
+//         #endregion
+
+//         #region ANIMATION EVENTS
+
+//         public override void EjectCasing() => equippedWeapon?.EjectCasing();
+//         public override void FillAmmunition(int amount) => equippedWeapon?.FillAmmunition(amount);
+//         public override void SetActiveMagazine(int active) => equippedWeaponMagazine.gameObject.SetActive(active != 0);
+//         public override void AnimationEndedReload() => reloading = false;
+//         public override void AnimationEndedInspect() => inspecting = false;
+//         public override void AnimationEndedHolster() => holstering = false;
+//         #endregion
+
+
+//         private IEnumerator Equip(int index = 0)
+//         {
+//             if (!holstered)
+//             {
+//                 SetHolstered(holstering = true);
+//                 yield return new WaitUntil(() => !holstering);
+//             }
+//             SetHolstered(false);
+//             characterAnimator.Play("Unholster", layerHolster, 0);
+//             inventory.Equip(index);
+//             RefreshWeaponSetup();
+//         }
+
+//         private void PlayReloadAnimation()
+//         {
+//             string stateName = equippedWeapon.HasAmmunition() ? "Reload" : "Reload Empty";
+//             characterAnimator.Play(stateName, layerActions, 0.0f);
+//             reloading = true;
+//             equippedWeapon.Reload();
+//         }
+
+//         private void Inspect()
+//         {
+//             inspecting = true;
+//             characterAnimator.CrossFade("Inspect", 0.0f, layerActions, 0);
+//         }
+//     }
+// }
+
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
@@ -7,37 +313,62 @@ namespace MyGame
 {
     public sealed class Character : CharacterBehaviour
     {
-        // Serialized fields
-        [Header("Inventory")][SerializeField] private InventoryBehaviour inventory;
-        [Header("Cameras")][SerializeField] private Camera cameraWorld;
+        // ---------------------------------------------------------------------------
+        // Reload is split into three animator states so any action can interrupt
+        // cleanly at a known point:
+        //
+        //   "Reload Start"  — mag comes out, hands move to pouch. No ammo yet.
+        //   "Reload End"    — mag seats, chamber closes. Triggered after Start ends.
+        //
+        // The animation event OnReloadAmmoFilled fires inside "Reload End" (or inside
+        // the legacy "Reload" / "Reload Empty" clips if you haven't split them yet).
+        // Until that event fires, cancelling costs the player their ammo gain.
+        // After it fires, cancelling is free — the round is already in the gun.
+        //
+        // Legacy single-clip reloads ("Reload" / "Reload Empty") still work exactly
+        // as before. Just place your existing FillAmmunition animation event as normal
+        // and it will flip reloadAmmoFilled at the right moment.
+        // ---------------------------------------------------------------------------
+
+        private enum ReloadPhase { None, Start, End }
+
+        // ── Serialized ──────────────────────────────────────────────────────────────
+        [Header("Inventory")]    [SerializeField] private InventoryBehaviour inventory;
+        [Header("Cameras")]      [SerializeField] private Camera cameraWorld;
+        [Header("Animation Procedural")] [SerializeField] private Animator characterAnimator;
         [Header("Animation")]
         [SerializeField] private float dampTimeLocomotion = 0.15f;
-        [SerializeField] private float dampTimeAiming = 0.3f;
-        [Header("Animation Procedural")][SerializeField] private Animator characterAnimator;
+        [SerializeField] private float dampTimeAiming     = 0.3f;
 
-        // Private fields
-        private bool aiming, running, holstered;
+        // ── Private state ────────────────────────────────────────────────────────────
+        private bool  aiming, running, holstered;
         private float lastShotTime;
-        private int layerOverlay, layerHolster, layerActions;
-        private CharacterKinematics characterKinematics;
-        private PlayerInput playerInput;
-        private WeaponBehaviour equippedWeapon;
-        private WeaponAttachmentManagerBehaviour weaponAttachmentManager;
-        private ScopeBehaviour equippedWeaponScope;
-        private MagazineBehaviour equippedWeaponMagazine;
-        private bool reloading, inspecting, holstering;
-        private Vector2 axisLook, axisMovement;
-        private bool holdingButtonAim, holdingButtonRun, holdingButtonFire;
-        private bool tutorialTextVisible;
-        private bool cursorLocked;
+        private int   layerOverlay, layerHolster, layerActions;
 
-        // Unity Methods
+        private CharacterKinematics              characterKinematics;
+        private PlayerInput                      playerInput;
+        private WeaponBehaviour                  equippedWeapon;
+        private WeaponAttachmentManagerBehaviour weaponAttachmentManager;
+        private ScopeBehaviour                   equippedWeaponScope;
+        private MagazineBehaviour                equippedWeaponMagazine;
+
+        private bool        inspecting, holstering;
+        private bool        reloading;          // true while any reload phase is active
+        private bool        reloadAmmoFilled;   // flipped by OnReloadAmmoFilled animation event
+        private ReloadPhase reloadPhase = ReloadPhase.None;
+
+        private Vector2 axisLook, axisMovement;
+        private bool    holdingButtonAim, holdingButtonRun, holdingButtonFire;
+        private bool    tutorialTextVisible;
+        private bool    cursorLocked;
+
+        // ── Unity ────────────────────────────────────────────────────────────────────
         protected override void Awake()
         {
             cursorLocked = true;
             UpdateCursorState();
             characterKinematics = GetComponent<CharacterKinematics>();
-            playerInput = GetComponent<PlayerInput>();
+            playerInput         = GetComponent<PlayerInput>();
             inventory.Init();
             RefreshWeaponSetup();
         }
@@ -51,7 +382,7 @@ namespace MyGame
 
         protected override void Update()
         {
-            aiming = holdingButtonAim && CanAim();
+            aiming  = holdingButtonAim && CanAim();
             running = holdingButtonRun && CanRun();
 
             if (holdingButtonFire)
@@ -67,44 +398,38 @@ namespace MyGame
 
         protected override void LateUpdate()
         {
-            if (equippedWeapon == null || equippedWeaponScope == null)
-                return;
+            if (equippedWeapon == null || equippedWeaponScope == null) return;
             if (characterKinematics != null)
                 characterKinematics.Compute();
         }
 
-        #region GETTERS
+        // ── Getters ──────────────────────────────────────────────────────────────────
+        public override Camera             GetCameraWorld()         => cameraWorld;
+        public override InventoryBehaviour GetInventory()           => inventory;
+        public override bool               IsCrosshairVisible()     => !aiming && !holstered;
+        public override bool               IsRunning()              => running;
+        public override bool               IsAiming()               => aiming;
+        public override bool               IsCursorLocked()         => cursorLocked;
+        public override bool               IsTutorialTextVisible()  => tutorialTextVisible;
+        public override Vector2            GetInputMovement()       => axisMovement;
+        public override Vector2            GetInputLook()           => axisLook;
+        public override bool               IsReloading()            => reloading;
+        public override bool               IsReloadAmmoFilled()     => reloadAmmoFilled;
 
-        public override Camera GetCameraWorld() => cameraWorld;
-        public override InventoryBehaviour GetInventory() => inventory;
-        public override bool IsCrosshairVisible() => !aiming && !holstered;
-        public override bool IsRunning() => running;
-        public override bool IsAiming() => aiming;
-        public override bool IsCursorLocked() => cursorLocked;
-        public override bool IsTutorialTextVisible() => tutorialTextVisible;
-        public override Vector2 GetInputMovement() => axisMovement;
-        public override Vector2 GetInputLook() => axisLook;
-
-        // Implement jump input using the new Input System:
         public override bool GetInputJump()
         {
-            bool jumpTriggered = playerInput !=  null && playerInput.actions["Jump"].triggered;
-            //Debug.Log("Jump triggered: " + jumpTriggered);
-            return jumpTriggered;
+            return playerInput != null && playerInput.actions["Jump"].triggered;
         }
 
-        
-
-        #endregion
-
-        #region METHODS
-
+        // ── Private helpers ──────────────────────────────────────────────────────────
         private void UpdateAnimator()
         {
             characterAnimator.SetFloat(Animator.StringToHash("Movement"),
-                Mathf.Clamp01(Mathf.Abs(axisMovement.x) + Mathf.Abs(axisMovement.y)), dampTimeLocomotion, Time.deltaTime);
-            characterAnimator.SetFloat(Animator.StringToHash("Aiming"), Convert.ToSingle(aiming), dampTimeAiming * 0.25f, Time.deltaTime);
-            characterAnimator.SetBool("Aim", aiming);
+                Mathf.Clamp01(Mathf.Abs(axisMovement.x) + Mathf.Abs(axisMovement.y)),
+                dampTimeLocomotion, Time.deltaTime);
+            characterAnimator.SetFloat(Animator.StringToHash("Aiming"),
+                Convert.ToSingle(aiming), dampTimeAiming * 0.25f, Time.deltaTime);
+            characterAnimator.SetBool("Aim",     aiming);
             characterAnimator.SetBool("Running", running);
         }
 
@@ -114,7 +439,7 @@ namespace MyGame
             characterAnimator.runtimeAnimatorController = equippedWeapon.GetAnimatorController();
             weaponAttachmentManager = equippedWeapon.GetAttachmentManager();
             if (weaponAttachmentManager == null) return;
-            equippedWeaponScope = weaponAttachmentManager.GetEquippedScope();
+            equippedWeaponScope    = weaponAttachmentManager.GetEquippedScope();
             equippedWeaponMagazine = weaponAttachmentManager.GetEquippedMagazine();
         }
 
@@ -133,7 +458,7 @@ namespace MyGame
 
         private void UpdateCursorState()
         {
-            Cursor.visible = !cursorLocked;
+            Cursor.visible   = !cursorLocked;
             Cursor.lockState = cursorLocked ? CursorLockMode.Locked : CursorLockMode.None;
         }
 
@@ -143,23 +468,93 @@ namespace MyGame
             characterAnimator.SetBool("Holstered", holstered);
         }
 
-        // Action checks (condensed)
-        private bool CanPlayAnimationFire() => !(holstered || holstering || reloading || inspecting);
-        private bool CanPlayAnimationReload() => !reloading && !inspecting;
+        // ── Can-do checks ────────────────────────────────────────────────────────────
+        private bool CanPlayAnimationFire()    => !(holstered || holstering || reloading || inspecting);
+        private bool CanPlayAnimationReload()  => !reloading && !inspecting;
         private bool CanPlayAnimationHolster() => !reloading && !inspecting;
-        private bool CanChangeWeapon() => !(holstering || reloading || inspecting);
+        private bool CanChangeWeapon()         => !(holstering || reloading || inspecting);
         private bool CanPlayAnimationInspect() => !(holstered || holstering || reloading || inspecting);
-        private bool CanAim() => !(holstered || inspecting || reloading || holstering);
-        // private bool CanRun() => !(inspecting || reloading || aiming || (holdingButtonFire && equippedWeapon.HasAmmunition()))
-        //     && (axisMovement.y > 0 && Math.Abs(Mathf.Abs(axisMovement.x) - 1) >= 0.01f); //only forward sprinting
-        private bool CanRun() => 
+        private bool CanAim()                  => !(holstered || inspecting || reloading || holstering);
+        private bool CanRun()                  =>
             !(inspecting || reloading || aiming || (holdingButtonFire && equippedWeapon.HasAmmunition()))
             && axisMovement.sqrMagnitude > 0.01f;
 
-        #endregion
+        // ── Reload ───────────────────────────────────────────────────────────────────
 
-        #region INPUT METHODS
+        private void PlayReloadAnimation()
+        {
+            reloading        = true;
+            reloadAmmoFilled = false;
+            reloadPhase      = ReloadPhase.Start;
+            equippedWeapon.Reload();
 
+            // Play "Reload Start" if it exists in the controller, otherwise fall back
+            // to the legacy single-clip states. The staged path requires two animator
+            // states: "Reload Start" and "Reload End". If your animator only has
+            // "Reload" / "Reload Empty", those still work — just rename the events.
+            bool hasAmmo     = equippedWeapon.HasAmmunition();
+            // string startState = hasAmmo ? "Reload Start" : "Reload Empty Start";
+            string startState = hasAmmo ? "Reload" : "Reload Empty";
+
+            // Try staged first; fall back to legacy clip name if state doesn't exist.
+            // (AnimatorStateInfo.IsName is the clean runtime check, but easiest is to
+            //  just use the name you've set up — document which path you're on.)
+            characterAnimator.Play(startState, layerActions, 0.0f);
+        }
+
+        /// Called by the animation event at the END of "Reload Start" / beginning
+        /// of "Reload End". Transitions to the second phase clip.
+        public void OnReloadPhaseStartEnded()
+        {
+            if (!reloading) return;
+            reloadPhase = ReloadPhase.End;
+            bool hasAmmo   = equippedWeapon.HasAmmunition(); // still pre-fill at this point
+            string endState = hasAmmo ? "Reload End" : "Reload Empty End";
+            characterAnimator.Play(endState, layerActions, 0.0f);
+        }
+
+        /// Cancel any in-progress reload. Safe to call from melee, dodge, ability, or
+        /// weapon-swap code. Checks reloadAmmoFilled so the caller can decide whether
+        /// to roll back ammo if needed (we keep it by default — gun is chambered).
+        public override void CancelReload()
+        {
+            if (!reloading) return;
+
+            reloading   = false;
+            reloadPhase = ReloadPhase.None;
+            // reloadAmmoFilled intentionally left as-is so callers can read it:
+            //   true  → ammo was already committed, cancel is free
+            //   false → mag never seated; ammo was NOT added (no rollback needed)
+            reloadAmmoFilled = false;
+
+            // Snap both animators back to idle
+            characterAnimator.CrossFade("Idle", 0.15f, layerActions, 0);
+            equippedWeapon?.CancelReload();
+        }
+
+        private void Inspect()
+        {
+            inspecting = true;
+            characterAnimator.CrossFade("Inspect", 0.0f, layerActions, 0);
+        }
+
+        private IEnumerator Equip(int index = 0)
+        {
+            // Cancel any reload in progress before swapping
+            if (reloading) CancelReload();
+
+            if (!holstered)
+            {
+                SetHolstered(holstering = true);
+                yield return new WaitUntil(() => !holstering);
+            }
+            SetHolstered(false);
+            characterAnimator.Play("Unholster", layerHolster, 0);
+            inventory.Equip(index);
+            RefreshWeaponSetup();
+        }
+
+        // ── Input handlers ───────────────────────────────────────────────────────────
         public void OnTryFire(InputAction.CallbackContext context)
         {
             if (!cursorLocked) return;
@@ -172,7 +567,8 @@ namespace MyGame
                     if (!CanPlayAnimationFire()) break;
                     if (equippedWeapon.HasAmmunition())
                     {
-                        if (!equippedWeapon.IsAutomatic() && Time.time - lastShotTime > 60.0f / equippedWeapon.GetRateOfFire())
+                        if (!equippedWeapon.IsAutomatic() &&
+                            Time.time - lastShotTime > 60.0f / equippedWeapon.GetRateOfFire())
                             Fire();
                     }
                     else
@@ -201,10 +597,8 @@ namespace MyGame
         public void OnTryAiming(InputAction.CallbackContext context)
         {
             if (!cursorLocked) return;
-            if (context.phase == InputActionPhase.Started)
-                holdingButtonAim = true;
-            else if (context.phase == InputActionPhase.Canceled)
-                holdingButtonAim = false;
+            if (context.phase == InputActionPhase.Started)       holdingButtonAim = true;
+            else if (context.phase == InputActionPhase.Canceled) holdingButtonAim = false;
         }
 
         public void OnTryHolster(InputAction.CallbackContext context)
@@ -220,10 +614,8 @@ namespace MyGame
         public void OnTryRun(InputAction.CallbackContext context)
         {
             if (!cursorLocked) return;
-            if (context.phase == InputActionPhase.Started)
-                holdingButtonRun = true;
-            else if (context.phase == InputActionPhase.Canceled)
-                holdingButtonRun = false;
+            if (context.phase == InputActionPhase.Started)       holdingButtonRun = true;
+            else if (context.phase == InputActionPhase.Canceled) holdingButtonRun = false;
         }
 
         public void OnTryInventoryNext(InputAction.CallbackContext context)
@@ -234,7 +626,7 @@ namespace MyGame
                 float scrollValue = context.valueType.IsEquivalentTo(typeof(Vector2))
                     ? Mathf.Sign(context.ReadValue<Vector2>().y)
                     : 1.0f;
-                int indexNext = scrollValue > 0 ? inventory.GetNextIndex() : inventory.GetLastIndex();
+                int indexNext    = scrollValue > 0 ? inventory.GetNextIndex() : inventory.GetLastIndex();
                 int indexCurrent = inventory.GetEquippedIndex();
                 if (CanChangeWeapon() && indexCurrent != indexNext)
                     StartCoroutine(nameof(Equip), indexNext);
@@ -250,56 +642,44 @@ namespace MyGame
             }
         }
 
-        public void OnMove(InputAction.CallbackContext context) => axisMovement = cursorLocked ? context.ReadValue<Vector2>() : default;
-        public void OnLook(InputAction.CallbackContext context) => axisLook = cursorLocked ? context.ReadValue<Vector2>() : default;
+        public void OnMove(InputAction.CallbackContext context)
+            => axisMovement = cursorLocked ? context.ReadValue<Vector2>() : default;
+
+        public void OnLook(InputAction.CallbackContext context)
+            => axisLook = cursorLocked ? context.ReadValue<Vector2>() : default;
+
         public void OnUpdateTutorial(InputAction.CallbackContext context)
         {
             tutorialTextVisible = context switch
             {
-                { phase: InputActionPhase.Started } => true,
+                { phase: InputActionPhase.Started  } => true,
                 { phase: InputActionPhase.Canceled } => false,
                 _ => tutorialTextVisible
             };
         }
 
-        #endregion
+        // ── Animation events (called by CharacterAnimationEventHandler) ──────────────
 
-        #region ANIMATION EVENTS
+        public override void EjectCasing()          => equippedWeapon?.EjectCasing();
+        public override void SetActiveMagazine(int active)
+            => equippedWeaponMagazine.gameObject.SetActive(active != 0);
 
-        public override void EjectCasing() => equippedWeapon?.EjectCasing();
-        public override void FillAmmunition(int amount) => equippedWeapon?.FillAmmunition(amount);
-        public override void SetActiveMagazine(int active) => equippedWeaponMagazine.gameObject.SetActive(active != 0);
-        public override void AnimationEndedReload() => reloading = false;
-        public override void AnimationEndedInspect() => inspecting = false;
-        public override void AnimationEndedHolster() => holstering = false;
-
-        #endregion
-
-        private IEnumerator Equip(int index = 0)
+        /// FillAmmunition doubles as the "reload safe point" event.
+        /// Once this fires, ammo is committed — cancelling after this is free.
+        public override void FillAmmunition(int amount)
         {
-            if (!holstered)
-            {
-                SetHolstered(holstering = true);
-                yield return new WaitUntil(() => !holstering);
-            }
-            SetHolstered(false);
-            characterAnimator.Play("Unholster", layerHolster, 0);
-            inventory.Equip(index);
-            RefreshWeaponSetup();
+            equippedWeapon?.FillAmmunition(amount);
+            reloadAmmoFilled = true;
         }
 
-        private void PlayReloadAnimation()
+        public override void AnimationEndedReload()
         {
-            string stateName = equippedWeapon.HasAmmunition() ? "Reload" : "Reload Empty";
-            characterAnimator.Play(stateName, layerActions, 0.0f);
-            reloading = true;
-            equippedWeapon.Reload();
+            reloading        = false;
+            reloadAmmoFilled = false;
+            reloadPhase      = ReloadPhase.None;
         }
 
-        private void Inspect()
-        {
-            inspecting = true;
-            characterAnimator.CrossFade("Inspect", 0.0f, layerActions, 0);
-        }
+        public override void AnimationEndedInspect()  => inspecting  = false;
+        public override void AnimationEndedHolster()  => holstering  = false;
     }
 }

@@ -5,9 +5,9 @@ using System.Collections;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Muzzle.
-    /// </summary>
+    
     public class Muzzle : MuzzleBehaviour
     {
         #region FIELDS SERIALIZED
@@ -54,22 +54,22 @@ namespace MyGame
         
         #region FIELDS
 
-        /// <summary>
+        
         /// Instantiated Particle System.
-        /// </summary>
+        
         private ParticleSystem particles;
-        /// <summary>
+        
         /// Instantiated light.
-        /// </summary>
+        
         private Light flashLight;
 
         #endregion
 
         #region UNITY FUNCTIONS
 
-        /// <summary>
+        
         /// Awake.
-        /// </summary>
+        
         private void Awake()
         {
             //Null Check.

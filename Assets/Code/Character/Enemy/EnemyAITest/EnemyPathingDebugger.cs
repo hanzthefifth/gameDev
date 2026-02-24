@@ -3,10 +3,10 @@ using UnityEngine.AI;
 
 namespace EnemyAI.Complete
 {
-    /// <summary>
+    
     /// Visual debugging for the AI system
     /// Attach to any enemy to see what they're thinking
-    /// </summary>
+    
     public class AIDebugVisualizer : MonoBehaviour
     {
         [Header("What to Show")]

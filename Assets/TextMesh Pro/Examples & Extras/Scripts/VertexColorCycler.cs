@@ -22,7 +22,7 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        
         /// Method to animate vertex colors of a TMP Text object.
         /// </summary>
         /// <returns></returns>

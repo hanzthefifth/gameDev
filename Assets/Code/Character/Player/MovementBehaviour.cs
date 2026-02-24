@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Abstract movement class. Handles interactions with the main movement component.
-    /// </summary>
+    
     public abstract class MovementBehaviour : MonoBehaviour
     {
         #region UNITY

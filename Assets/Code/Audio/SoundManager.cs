@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace EnemyAI.Complete
 {
-    /// <summary>
+    
     /// Global manager that relays sound events to all AI perception systems
     /// Add this to a GameObject in your scene (only need one)
-    /// </summary>
+    
     public class SoundManager : MonoBehaviour
     {
         public static SoundManager Instance { get; private set; }
@@ -37,9 +37,9 @@ namespace EnemyAI.Complete
             }
         }
         
-        /// <summary>
+        
         /// Register an AI perception system to receive sound events
-        /// </summary>
+        
         public void RegisterListener(PerceptionSystem listener)
         {
             if (!listeners.Contains(listener))
@@ -49,18 +49,14 @@ namespace EnemyAI.Complete
 
             }
         }
-        
-        /// <summary>..
-        /// Unregister an AI perception system (called when AI is destroyed)
-        /// </summary>
+        /// Unregister an AI perception system (called when AI is destroyed) 
         public void UnregisterListener(PerceptionSystem listener)
         {
             listeners.Remove(listener);
         }
         
-        /// <summary>
+        
         /// Broadcast a sound to all nearby AI
-        /// </summary>
         /// <param name="position">Where the sound occurred</param>
         /// <param name="intensity">How loud/alerting (0-1)</param>
         /// <param name="range">Maximum distance AI can hear it</param>

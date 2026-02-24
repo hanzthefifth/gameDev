@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace MyGame
 {
-    /// <summary>
+    
     /// Loops.
-    /// </summary>
+    
     public static class Loops
     {
         public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)

@@ -311,7 +311,7 @@ public static class AutoMaterialTools
     }
 
 
-    /// <summary>
+    
     /// Central place for your "style": smoothness, metallic, emissive, etc.
     /// Changing this and running Step 1b effectively updates all mats.
     /// </summary>
