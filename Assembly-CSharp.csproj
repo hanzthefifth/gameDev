@@ -87,7 +87,6 @@
     <Compile Include="Assets\Code\Services\IGameService.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\Code\Animation\CharacterAnimationEventHandler.cs" />
-    <Compile Include="Assets\Code\Character\Enemy\Controllers\EnemyController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
@@ -131,7 +130,7 @@
     <Compile Include="Assets\Code\Character\Player\PlayerDeathController.cs" />
     <Compile Include="Assets\Code\Weapons\Magazine.cs" />
     <Compile Include="Assets\Code\Weapons\WeaponBehaviour.cs" />
-    <Compile Include="Assets\Code\Character\Combat\EnemyHealth.cs" />
+    <Compile Include="Assets\Code\Character\Enemy\Controllers\RagdollController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\Code\Weapons\ScopeBehaviour.cs" />

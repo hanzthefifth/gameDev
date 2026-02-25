@@ -72,6 +72,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             Die();
     }
 
+    //i guess we just implement the interface like this for now
+    public void TakeDamage(float amount, Vector3 force, Vector3 hitPoint, Rigidbody hitBody = null)
+    {
+        // Player currently ignores hit context.
+        TakeDamage(amount);
+    }
+
     public void Heal(float amount)
     {
         if (IsDead || amount <= 0f)

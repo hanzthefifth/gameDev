@@ -17,6 +17,7 @@ namespace MyGame
         private PlayerInput playerInput;
         private Movement movement;
         private Character character;
+        private CameraLook cameraLook;
 
         private bool isDead;
 
@@ -26,6 +27,7 @@ namespace MyGame
             playerInput  = GetComponent<PlayerInput>();
             movement     = GetComponent<Movement>();
             character    = GetComponent<Character>();
+            cameraLook = GetComponentInChildren<CameraLook>();
         }
 
         private void OnEnable()
@@ -62,9 +64,12 @@ namespace MyGame
             }
 
             // IMPORTANT: stop gameplay inputs by switching action map
-            if (playerInput != null)
-                playerInput.SwitchCurrentActionMap(deadMapName);
+            if (playerInput != null) playerInput.SwitchCurrentActionMap(deadMapName);
+            if (cameraLook != null) cameraLook.enabled = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
+
 
         // Wire this to Dead/Restart in PlayerInput UnityEvents
         public void OnRestart(InputAction.CallbackContext ctx)
@@ -85,6 +90,7 @@ namespace MyGame
 
             if (movement != null) movement.enabled = true;
             if (character != null) character.enabled = true;
+            if (cameraLook != null) cameraLook.enabled = true;
         }
     }
 }
