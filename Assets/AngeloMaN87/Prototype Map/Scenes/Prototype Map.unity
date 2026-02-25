@@ -3881,6 +3881,182 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_ActionId
+      value: 779a6091-f045-4535-8635-505915368372
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_ActionId
+      value: 98c0547a-0a5e-484e-ba12-a7812face9b0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[9].m_ActionId
+      value: f2d17bd7-8d54-496b-99fd-8cb954650514
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[10].m_ActionId
+      value: bfdda7d2-cee8-4cb7-91a0-f3d4411e7f97
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[11].m_ActionId
+      value: 418359b7-9253-4bb8-a363-e1fb23da7133
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[12].m_ActionId
+      value: e3ef7edf-7ab7-43b4-8fdc-67547435a45b
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_ActionId
+      value: 8dfbac0a-435e-4fa0-a00f-21b90315bd84
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_ActionId
+      value: 9beb2473-ee7d-4a54-857b-b42a64a66a65
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[15].m_ActionId
+      value: 207fb2a2-8add-4ddb-bda7-c1887aeb313a
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_ActionId
+      value: 7e77a0a8-a5be-4193-a3db-5c6824fafb13
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_ActionName
+      value: 'Player/Run[/Keyboard/leftShift,/XInputControllerWindows/leftStickPress]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_ActionName
+      value: 'Player/Inventory Next[/Keyboard/q,/XInputControllerWindows/buttonNorth]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[9].m_ActionName
+      value: 'Player/Inspect[/Keyboard/t,/XInputControllerWindows/dpad/left]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[10].m_ActionName
+      value: 'Player/Time Speed Stop[/Keyboard/5]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[11].m_ActionName
+      value: 'Player/Time Speed Up[/Keyboard/9,/XInputControllerWindows/dpad/up]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[12].m_ActionName
+      value: 'Player/Time Speed Down[/Keyboard/8,/XInputControllerWindows/dpad/down]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_ActionName
+      value: 'Player/Inventory Next Wheel[/Mouse/scroll]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_ActionName
+      value: 'Player/Lock Cursor[/Keyboard/escape]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[15].m_ActionName
+      value: 'Player/Tutorial[/Keyboard/tab]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_ActionName
+      value: 'Dead/New action[/Keyboard/r]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[10].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1677622918}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[11].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1677622918}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1677622920}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1677622920}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1677622926}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTryRun
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTryInventoryNext
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[9].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTryInspect
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[10].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[11].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnIncrease
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[12].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnDecrease
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTryInventoryNext
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnLockCursor
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[15].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnUpdateTutorial
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnRestart
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[10].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: InfimaGames.LowPolyShooterPack.TimeHandler, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[11].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: InfimaGames.LowPolyShooterPack.TimeHandler, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: InfimaGames.LowPolyShooterPack.Character, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: InfimaGames.LowPolyShooterPack.Character, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MyGame.PlayerDeathController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4340247066119212829, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 5298256239370404522, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       propertyPath: m_Name
       value: PlayerController
@@ -3929,6 +4105,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5298256239370404522, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+      insertIndex: 11
+      addedObject: {fileID: 1677622926}
     - targetCorrespondingSourceObject: {fileID: 8472335437570696233, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1736710502}
@@ -13870,6 +14049,48 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1677622913 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5298256239370404522, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+  m_PrefabInstance: {fileID: 436855918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1677622918 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7166308032097571315, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+  m_PrefabInstance: {fileID: 436855918}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677622913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e55e7a428d82413e839adb23b9351c98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1677622920 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 818754192847737504, guid: 9a40412177a268e4caee9b1fa79d44b0, type: 3}
+  m_PrefabInstance: {fileID: 436855918}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677622913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cedea47162792a74cb9ec77109d20e72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1677622926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677622913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9677a26d13526a54b82d0ca60dfe422a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MyGame.PlayerDeathController
+  aliveMapName: Player
+  deadMapName: Dead
+  disableEquippedWeaponComponent: 1
 --- !u!1 &1689076768
 GameObject:
   m_ObjectHideFlags: 0

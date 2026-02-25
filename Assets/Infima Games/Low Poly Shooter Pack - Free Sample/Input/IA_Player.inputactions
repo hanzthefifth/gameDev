@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "IA_Player",
     "maps": [
         {
@@ -511,6 +512,34 @@
                     "processors": "",
                     "groups": "",
                     "action": "Tutorial",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Dead",
+            "id": "901ebb0f-39f2-4e88-b713-57e29463a9b7",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "7e77a0a8-a5be-4193-a3db-5c6824fafb13",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "79cbcbcd-e85c-43a1-8cfd-96fb7f00bcd5",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

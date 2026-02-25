@@ -128,6 +128,7 @@
     <Compile Include="Assets\Code\Interface\StaminaUI.cs" />
     <Compile Include="Assets\Code\Interface\Element.cs" />
     <Compile Include="Assets\Code\Services\AudioManagerService.cs" />
+    <Compile Include="Assets\Code\Character\Player\PlayerDeathController.cs" />
     <Compile Include="Assets\Code\Weapons\Magazine.cs" />
     <Compile Include="Assets\Code\Weapons\WeaponBehaviour.cs" />
     <Compile Include="Assets\Code\Character\Combat\EnemyHealth.cs" />
