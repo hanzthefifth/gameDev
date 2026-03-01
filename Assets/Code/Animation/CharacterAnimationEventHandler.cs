@@ -91,6 +91,16 @@ namespace MyGame
 		/// Melee Animation Ended. This function is called from an Animation Event.
 		private void OnAnimationEndedMelee()
 		{
+			if(playerCharacter != null)
+				playerCharacter.AnimationEndedMelee();
+		}
+
+		/// Melee hit frame reached. This function is called from an Animation Event.
+		/// Place this event at the impact frame of your swing clip.
+		private void OnMeleeHit()
+		{
+			if(playerCharacter != null)
+				playerCharacter.OnMeleeHit();
 		}
 
 		

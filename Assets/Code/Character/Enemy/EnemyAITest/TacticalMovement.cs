@@ -14,27 +14,26 @@ namespace EnemyAI.Complete
         private RoleProfile role;
 
         [Header("Movement Settings")]
-        [SerializeField] private float preferredDistance = 12f;      // ideal combat radius
+        [SerializeField] private float engagementRange = 12f;      // ideal combat range, set slightly lower than weapon range to account for player movement
 
         [SerializeField] private int sampleCount = 12;               // number of candidate spots per reposition
-        [SerializeField] private float sampleRadius = 6f;            // how far samples are from current position
-        [SerializeField] private float minSampleRadius = 0.5f;
+        [SerializeField] private float repositionSampleRadius = 6f;            // how far samples are from current position
+        [SerializeField] private float minrepositionSampleRadius = 0.5f;
 
         [SerializeField, Range(0f, 1f)] private float predictionConfidenceThreshold = 0.7f;
 
-        [SerializeField] private float minDistanceFromTarget = 3.0f; // never pick positions closer than this to player
+        [SerializeField] private float personalSpaceRadius = 3.0f; // never pick positions closer than this to player
 
         [SerializeField, Tooltip("Max angle (deg) to either side of the forward-to-target direction allowed for samples. 180 = full ring.")]
         private float maxSampleSideAngle = 130f;    // restrict sampling arc so we don't pick points fully behind us
 
         [Header("Reposition Timing")]
-        [SerializeField] private float repositionInterval = 3f;      // ai must wait minimum time before repositioning again
+        [SerializeField] private float repositionCooldown = 3f;      // ai must wait minimum time before repositioning again
 
-        [SerializeField, Tooltip("How far from preferredDistance we allow before we consider ourselves 'good enough' to stand and shoot.")]
-        private float distanceTolerance = 2f;       // band around preferredDistance where we hold position
+        [SerializeField, Tooltip("How far from engagementRange we allow before we consider ourselves 'good enough' to stand and shoot.")]
+        private float distanceTolerance = 2f;       // band around engagementRange where we hold position
 
-        [SerializeField, Tooltip("If farther than this past preferredDistance, we just run straight toward the player instead of sampling.")]
-        private float simpelChaseRange = 6f;   // how much farther than preferred before we use simple chase
+
         [Header("Micro-Strafe Settings")]
         [SerializeField] private bool enableStrafe = true;
         [SerializeField] private float strafeSpeed = 3.0f;
@@ -44,7 +43,11 @@ namespace EnemyAI.Complete
         [SerializeField] private float minStrafeDuration = 0.2f;
         [SerializeField] private float maxStrafeDuration = 0.4f;
 
+
         private float nextRepositionTime;
+        [Header("Pathing")]
+        [SerializeField] private float repathInterval = 0.25f; // seconds between nav path recalculations
+        private float nextRepathTime = -1f;           // -1 so the very first repath fires immediately
         private float nextStrafeTime = 0f;
         private float currentStrafeEndTime = 0f;
         private float currentStrafeBurstDistance = 0f;
@@ -60,7 +63,6 @@ namespace EnemyAI.Complete
             enemyLayerMask = LayerMask.GetMask("Enemy");
             allyOverlapBuffer = new Collider[Mathf.Max(1, allyOverlapBufferSize)];
         }
-    
 
         public void Initialize(NavMeshAgent agent, PerceptionSystem perception, RoleProfile role)
         {
@@ -70,12 +72,15 @@ namespace EnemyAI.Complete
 
             if (role != null)
             {
-                preferredDistance = role.PreferredRange;
-                repositionInterval = role.RepositionFrequency;
-                Debug.Log($"[TacticalMovement] {name} init: role={role}, preferredDistance={preferredDistance}");
-
-
+                engagementRange = role.PreferredRange;
+                repositionCooldown = role.RepositionFrequency;
+                Debug.Log($"[TacticalMovement] {name} init: role={role}, engagementRange={engagementRange}");
             }
+
+            // Tell the NavMeshAgent to naturally brake at engagementRange so momentum
+            // doesn't carry the enemy through the player on the initial charge.
+            if (agent != null)
+                agent.stoppingDistance = Mathf.Max(0f, engagementRange - 0.1f);
         }
 
         public void UpdateCombatPosition()
@@ -96,71 +101,76 @@ namespace EnemyAI.Complete
             toTarget.y = 0f;
             float distanceToThreat = toTarget.magnitude;
 
-            // 1) NO VISUAL: chase to last known / predicted position, keep looking that way
+            // 1) NO VISUAL: chase to last known / predicted position
             if (!threat.hasVisualContact)
             {
-                agent.isStopped = false;
-                agent.SetDestination(facingPosition);
+                TrySetDestination(GetDestinationAtPreferredRange(facingPosition));
                 FaceDirection(toTarget);
                 return;
             }
 
-            // We DO have visual contact ---------------------------------------------------------
+            // We DO have visual contact ------------------------------------------------
 
-            // 1.5) Too close / inside "personal space" → back off directly
-            if (distanceToThreat < minDistanceFromTarget)
+            // 1.5) Too close / inside personal space → back off directly.
+            // Use a dedicated backoff rather than MoveDirectlyTowardPreferredRange,
+            // which uses repositionSampleRadius as its step size and can overshoot badly
+            // at very close range.
+            if (distanceToThreat < personalSpaceRadius)
             {
-                MoveDirectlyTowardPreferredRange(threat, distanceToThreat);
+                BackOffFromTarget(threat.target.position);
                 FaceDirection(toTarget);
                 return;
             }
 
-            // 2) Too far: simple chase until we get into a rough band around preferredDistance.
-            if (distanceToThreat > preferredDistance + simpelChaseRange)
+            // 2) Outside tolerance band — navigate directly to engagementRange.
+            // Uses GetDestinationAtPreferredRange so the agent gets one clean full
+            // path rather than incremental hops. No repositionCooldown gate here.
+            float distanceError = distanceToThreat - engagementRange;
+            if (Mathf.Abs(distanceError) > distanceTolerance)
             {
-                if (threat.target != null)
-                {
-                    agent.isStopped = false;
-                    agent.SetDestination(threat.target.position);
-                }
+                TrySetDestination(GetDestinationAtPreferredRange(threat.target.position));
                 FaceDirection(toTarget);
                 return;
             }
 
-            // 3) Decide whether to reposition tactically or stand and shoot.
-            bool needsReposition =
-                Time.time >= nextRepositionTime &&                             // time gate
-                Mathf.Abs(distanceToThreat - preferredDistance) > distanceTolerance; // distance gate
-
-            if (needsReposition)
+            // 4) Inside the tolerance band — tactical reposition or hold.
+            bool cooldownReady = Time.time >= nextRepositionTime;
+            if (cooldownReady)
             {
-                // Try to find a better combat ring position
                 bool moved = FindAndMoveToBestPosition(threat);
                 if (!moved)
-                {
-                    // Fallback: if nothing better is found, just move a bit toward ideal distance
-                    MoveDirectlyTowardPreferredRange(threat, distanceToThreat);
-                }
-
-                nextRepositionTime = Time.time + repositionInterval;
-
-                // Always face the target while moving (strafing looks intentional)
-                FaceDirection(toTarget);
+                    MoveDirectlyTowardPreferredRange(threat);
+                nextRepositionTime = Time.time + repositionCooldown;
             }
-            else
+
+            // If no tactical move was issued (or cooldown not ready), hold and strafe.
+            if (agent.remainingDistance <= agent.stoppingDistance + 0.1f)
             {
-                // 4) We're in a good band around our ideal distance → stand & shoot.
-                //    No continuous pathing here: we stop and clear the path so the
-                //    agent is "idle" from NavMesh's perspective.
                 agent.isStopped = true;
                 if (agent.hasPath)
-                {
                     agent.ResetPath();
-                }
-                // Micro strafing: local, no path changes
                 UpdateMicroStrafe(threat, distanceToThreat);
-                FaceDirection(toTarget);
             }
+            FaceDirection(toTarget);
+        }
+
+        // ---------------------------------------------------------------------------
+        // FIX: Returns a world position that sits at engagementRange from the
+        // target along the line between this enemy and the target. The NavMeshAgent
+        // will stop naturally there instead of trying to reach the player's feet.
+        // ---------------------------------------------------------------------------
+        // Returns a point at exactly engagementRange from targetPosition,
+        // on the line between this enemy and the target.
+        // Works for both approach (too far) and retreat (too close).
+        private Vector3 GetDestinationAtPreferredRange(Vector3 targetPosition)
+        {
+            Vector3 toSelf = transform.position - targetPosition;
+            toSelf.y = 0f;
+
+            if (toSelf.sqrMagnitude < 0.001f)
+                toSelf = transform.forward; // fallback if exactly on top
+
+            return targetPosition + toSelf.normalized * engagementRange;
         }
 
         private bool FindAndMoveToBestPosition(PerceptionSystem.ThreatInfo threat)
@@ -169,8 +179,6 @@ namespace EnemyAI.Complete
                 return false;
 
             Vector3 targetPos = threat.target.position;
-
-            // Score current position so we only move if we find something better.
             float currentScore = ScorePosition(transform.position, targetPos);
 
             Vector3 toTarget = (targetPos - transform.position);
@@ -190,7 +198,7 @@ namespace EnemyAI.Complete
             for (int i = 0; i < sampleCount; i++)
             {
                 float angle = (i / (float)sampleCount) * 360f * Mathf.Deg2Rad;
-                float radius = Random.Range(minSampleRadius, sampleRadius);
+                float radius = Random.Range(minrepositionSampleRadius, repositionSampleRadius);
 
                 Vector3 offset = new Vector3(
                     Mathf.Cos(angle) * radius,
@@ -198,12 +206,9 @@ namespace EnemyAI.Complete
                     Mathf.Sin(angle) * radius
                 );
 
-                // Normalize for direction tests
                 Vector3 offsetDir = offset.normalized;
-
-                // Reject samples that are too far behind us relative to the target
                 float dot = Vector3.Dot(offsetDir, toTargetDir);
-                if (dot < maxSideDot) // e.g. if maxSampleSideAngle = 130, this removes ~50° hard-back arc
+                if (dot < maxSideDot)
                     continue;
 
                 Vector3 samplePos = transform.position + offset;
@@ -212,8 +217,7 @@ namespace EnemyAI.Complete
                 {
                     float distanceToTarget = Vector3.Distance(hit.position, targetPos);
 
-                    // Never stand on top of the player
-                    if (distanceToTarget < minDistanceFromTarget)
+                    if (distanceToTarget < personalSpaceRadius)
                         continue;
 
                     float score = ScorePosition(hit.position, targetPos);
@@ -227,62 +231,61 @@ namespace EnemyAI.Complete
                 }
             }
 
-            // Only move if this is meaningfully better than where we are now
             const float minImprovement = 0.2f;
             if (foundBetter && bestScore >= currentScore + minImprovement)
             {
-                agent.isStopped = false;
-                agent.SetDestination(bestPosition);
+                TrySetDestination(bestPosition);
                 return true;
             }
 
             return false;
         }
 
-        private void MoveDirectlyTowardPreferredRange(PerceptionSystem.ThreatInfo threat, float currentDistance)
+        // Steps away from the target every frame the player is inside personalSpaceRadius.
+        // Uses agent.Move for immediate per-frame response instead of SetDestination,
+        // which only fires once and stops reacting until the next cooldown.
+        [Header("Personal Space Backoff")]
+        // (speed exposed so you can tune how urgently the enemy retreats)
+        [SerializeField] private float backoffSpeed = 3.5f;
+
+        private void BackOffFromTarget(Vector3 targetPos)
         {
-            if (threat.target == null)
-                return;
+            Vector3 away = transform.position - targetPos;
+            away.y = 0f;
 
-            Vector3 targetPos = threat.target.position;
-            Vector3 toTarget = targetPos - transform.position;
-            toTarget.y = 0f;
-            if (toTarget.sqrMagnitude < 0.0001f)
-                return;
+            if (away.sqrMagnitude < 0.0001f)
+                away = -transform.forward;
 
-            Vector3 dirToTarget = toTarget.normalized;
+            away.Normalize();
 
-            // // Positive delta => we are too close and need to move away.
-            float delta = currentDistance - preferredDistance;
-            // // How far we want to move this step
-            float moveAmount = Mathf.Clamp(Mathf.Abs(delta), 0f, sampleRadius);
-            
+            // Clear any existing path so the agent doesn't fight the manual move
+            if (agent.hasPath)
+                agent.ResetPath();
+            agent.isStopped = false;
 
-            // Decide direction:
-            // - Too close => move away from target
-            // - Too far  => move toward target
-            Vector3 moveDir = (delta > 0f) ? dirToTarget : -dirToTarget;
+            // Move directly away this frame — NavMeshAgent.Move handles obstacle avoidance
+            agent.Move(away * backoffSpeed * Time.deltaTime);
+        }
 
-            Vector3 desiredPos = transform.position + moveDir * moveAmount;
+        // Simple fixed-interval repath — what most games do.
+        // Recalculates the path every repathInterval seconds regardless of
+        // how much the target moved. Eliminates jitter without edge cases.
+        private bool TrySetDestination(Vector3 destination)
+        {
+            if (Time.time < nextRepathTime)
+                return false;
 
-            // Ensure the new position is not inside minDistanceFromTarget
-            float newDist = Vector3.Distance(desiredPos, targetPos);
-            if (newDist < minDistanceFromTarget)
-            {
-                Vector3 away = (transform.position - targetPos);
-                away.y = 0f;
-                if (away.sqrMagnitude > 0.0001f)
-                {
-                    away.Normalize();
-                    desiredPos = targetPos + away * minDistanceFromTarget;
-                }
-            }
+            agent.isStopped = false;
+            agent.SetDestination(destination);
+            nextRepathTime = Time.time + repathInterval;
+            return true;
+        }
 
-            if (NavMesh.SamplePosition(desiredPos, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-            {
-                agent.isStopped = false;
-                agent.SetDestination(hit.position);
-            }
+        // Fallback used by FindAndMoveToBestPosition when no better sample is found.
+        private void MoveDirectlyTowardPreferredRange(PerceptionSystem.ThreatInfo threat)
+        {
+            if (threat.target == null) return;
+            TrySetDestination(GetDestinationAtPreferredRange(threat.target.position));
         }
 
         private Vector3 GetThreatFacingPosition(PerceptionSystem.ThreatInfo threat)
@@ -292,34 +295,23 @@ namespace EnemyAI.Complete
                 threat.estimatedVelocity.sqrMagnitude > 0.01f;
 
             if (hasReliablePrediction)
-            {
                 return threat.predictedPosition;
-            }
 
             if (threat.target != null)
                 return threat.target.position;
 
             return threat.lastSeenPosition;
         }
-        
 
         private float ScorePosition(Vector3 position, Vector3 targetPosition)
         {
             float score = 0f;
 
-            // 1. Distance score - prefer positions at preferred distance
             float distance = Vector3.Distance(position, targetPosition);
-            float distanceDeviation = Mathf.Abs(distance - preferredDistance);
+            float distanceDeviation = Mathf.Abs(distance - engagementRange);
             float distanceScore = 1f - Mathf.Clamp01(distanceDeviation / 5f);
             score += distanceScore * 2f;
 
-            // 2. Spacing from allies - avoid crowding
-            //Collider[] nearby = Physics.OverlapSphere(position, 3f, LayerMask.GetMask("Enemy"));
-            //Collider[] nearby = Physics.OverlapSphereNonAlloc(position, 3f, LayerMask.GetMask("Enemy"));
-            //float spacingScore = nearby.Length <= 1 ? 1f : 1f / nearby.Length;
-            //score += spacingScore;
-
-            // 2) Spacing from allies - NON-ALLOC version
             int nearbyCount = Physics.OverlapSphereNonAlloc(
                 position,
                 3f,
@@ -327,17 +319,11 @@ namespace EnemyAI.Complete
                 enemyLayerMask
             );
 
-            // Optional: saturation handling (buffer full means we may have missed some colliders)
             bool bufferSaturated = nearbyCount == allyOverlapBuffer.Length;
             float spacingScore = nearbyCount <= 1 ? 1f : 1f / nearbyCount;
-
-            // Small penalty if saturated (keeps scoring conservative)
-            if (bufferSaturated)
-                spacingScore *= 0.9f;
-
+            if (bufferSaturated) spacingScore *= 0.9f;
             score += spacingScore;
 
-            // 3. Line of sight - prefer positions with clear shot
             Vector3 origin = position + Vector3.up * 1.5f;
             Vector3 target = targetPosition + Vector3.up * 1.0f;
             bool hasLOS = !Physics.Linecast(origin, target, LayerMask.GetMask("Default"));
@@ -345,7 +331,6 @@ namespace EnemyAI.Complete
 
             return score;
         }
-
 
         private void FaceDirection(Vector3 direction)
         {
@@ -369,46 +354,38 @@ namespace EnemyAI.Complete
             if (agent == null || !agent.enabled || !agent.isOnNavMesh)
                 return;
 
-            // Only strafe when we're close to our preferred combat range.
-            float distOffset = Mathf.Abs(distanceToThreat - preferredDistance);
+            float distOffset = Mathf.Abs(distanceToThreat - engagementRange);
             if (distOffset > distanceTolerance)
                 return;
 
-            // Time-based burst strafing
             float time = Time.time;
 
             if (time >= currentStrafeEndTime)
             {
-                // Not currently strafing: wait until nextStrafeTime to start a new burst
                 if (time < nextStrafeTime)
                     return;
 
-                // Start a new strafe burst
                 strafeDirection = (Random.value < 0.5f) ? -1 : 1;
                 currentStrafeBurstDistance = Mathf.Max(0f, strafeDistance);
                 currentStrafeMovedDistance = 0f;
 
                 float minDuration = Mathf.Min(minStrafeDuration, maxStrafeDuration);
                 float maxDuration = Mathf.Max(minStrafeDuration, maxStrafeDuration);
-                float duration = Random.Range(minDuration, maxDuration);
-                currentStrafeEndTime = time + duration;
+                currentStrafeEndTime = time + Random.Range(minDuration, maxDuration);
 
                 float minPause = Mathf.Min(minStrafePause, maxStrafePause);
                 float maxPause = Mathf.Max(minStrafePause, maxStrafePause);
-                float pause = Random.Range(minPause, maxPause);
-                nextStrafeTime = currentStrafeEndTime + pause;
+                nextStrafeTime = currentStrafeEndTime + Random.Range(minPause, maxPause);
             }
 
-            // Actually move sideways during the active strafe window
             Vector3 toTarget = threat.target.position - transform.position;
             toTarget.y = 0f;
             if (toTarget.sqrMagnitude < 0.0001f)
                 return;
 
             Vector3 forwardToTarget = toTarget.normalized;
-            Vector3 right = new Vector3(forwardToTarget.z, 0, -forwardToTarget.x); // perpendicular on XZ
+            Vector3 right = new Vector3(forwardToTarget.z, 0, -forwardToTarget.x);
 
-            // Compute a small step this frame
             float frameDistanceBudget = strafeSpeed * Time.deltaTime;
             float remainingBurstDistance = currentStrafeBurstDistance - currentStrafeMovedDistance;
             float moveDistance = Mathf.Min(frameDistanceBudget, Mathf.Max(0f, remainingBurstDistance));
@@ -416,13 +393,8 @@ namespace EnemyAI.Complete
             if (moveDistance <= 0f)
                 return;
 
-            Vector3 step = right * (strafeDirection * moveDistance);
-
-            // Try moving using NavMeshAgent.Move so we don't touch SetDestination
-            agent.Move(step);
+            agent.Move(right * (strafeDirection * moveDistance));
             currentStrafeMovedDistance += moveDistance;
         }
-
-
     }
 }

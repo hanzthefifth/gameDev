@@ -37,6 +37,10 @@ namespace MyGame
 		{
 		}
 
+		private void OnMeleeHit()
+		{
+		}
+
 		private void OnAnimationEndedInspect()
 		{
 		}

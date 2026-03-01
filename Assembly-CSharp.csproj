@@ -74,10 +74,12 @@
     <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\ClaudeTempAI.cs" />
     <Compile Include="Assets\Code\Tools\Looping\Loops.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
+    <Compile Include="Assets\Code\Weapons\MeleeWeapon.cs" />
     <Compile Include="Assets\Code\Weapons\Scope.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\Code\Audio\SoundManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
+    <Compile Include="Assets\Code\Weapons\MeleeWeaponConfig.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
@@ -136,6 +138,7 @@
     <Compile Include="Assets\Code\Weapons\ScopeBehaviour.cs" />
     <Compile Include="Assets\Code\Legacy\ProjectileScript.cs" />
     <Compile Include="Assets\Code\Legacy\TargetScript.cs" />
+    <Compile Include="Assets\Code\Weapons\MeleeWeaponBehavior.cs" />
     <Compile Include="Assets\Code\Legacy\PlayParticles.cs" />
     <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\CombatStateMachine.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
@@ -172,7 +175,6 @@
     <Compile Include="Assets\Code\Interface\CanvasSpawner.cs" />
     <Compile Include="Assets\Code\Camera\CameraInertiaFollow.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
-    <Compile Include="Assets\Code\Character\Enemy\HumanEnemyAI.cs" />
     <Compile Include="Assets\Code\Character\Player\MovementBehaviour.cs" />
     <Compile Include="Assets\Code\Weapons\UtilitiesWeapons.cs" />
     <Compile Include="Assets\Code\Legacy\GasTankScript.cs" />

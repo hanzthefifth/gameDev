@@ -28,7 +28,7 @@ namespace MyGame
         [Tooltip("Damage per hit. Overridden by WeaponConfig if assigned.")]
         [SerializeField] private float damage = 20f;
         [Tooltip("Impact force on rigidbodies. Overridden by WeaponConfig if assigned.")]
-        [SerializeField] private float impactForce = 30f;
+        [SerializeField] private float impactForce = 5f;
 
         [Header("AI Hearing")]
         [Tooltip("Gunshot loudness for AI (0–1).")]

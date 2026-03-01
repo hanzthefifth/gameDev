@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game.LowPolyShooterPack.WeaponConfig
   weaponId: 1
   displayName: AssualtRifle
-  baseDamage: 20
+  baseDamage: 100
   damageType: 0
-  impactForce: 30
+  impactForce: 0.2
   maxDistance: 500
   gunshotSoundIntensity: 10
   gunshotSoundRange: 30

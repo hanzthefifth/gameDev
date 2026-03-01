@@ -184,7 +184,7 @@ namespace EnemyAI.Complete
             switch (state)
             {
                 case State.Combat:
-                    agent.isStopped = false; // Allow movement for repositioning
+                    agent.isStopped = false;
                     perception.ClearRecentSound();
                     break;
 

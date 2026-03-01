@@ -52,6 +52,11 @@ namespace MyGame
         private bool        reloadAmmoFilled;   // flipped by OnReloadAmmoFilled animation event
         private ReloadPhase reloadPhase = ReloadPhase.None;
 
+        // ── Melee state ──────────────────────────────────────────────────────────
+        private bool  meleeing;               // true while melee animation is playing
+        private float meleeFireLockoutUntil;  // Time.time stamp — gun fire blocked until this
+        private MeleeWeaponBehaviour equippedMeleeWeapon; // non-null only when a melee weapon is equipped
+
         private Vector2 axisLook, axisMovement;
         private bool    holdingButtonAim, holdingButtonRun, holdingButtonFire;
         private bool    tutorialTextVisible;
@@ -92,7 +97,7 @@ namespace MyGame
             aiming  = holdingButtonAim && CanAim();
             running = holdingButtonRun && CanRun();
 
-            if (holdingButtonFire)
+            if (holdingButtonFire && equippedMeleeWeapon == null) // auto-fire only for ranged weapons
             {
                 if (CanPlayAnimationFire() && equippedWeapon.HasAmmunition() && equippedWeapon.IsAutomatic())
                 {
@@ -124,6 +129,7 @@ namespace MyGame
         public override Vector2            GetInputLook()           => axisLook;
         public override bool               IsReloading()            => reloading;
         public override bool               IsReloadAmmoFilled()     => reloadAmmoFilled;
+        public override bool               IsMeleeAttacking()       => meleeing;
 
         public override bool GetInputJump()
         {
@@ -146,6 +152,10 @@ namespace MyGame
         {
             if ((equippedWeapon = inventory.GetEquipped()) == null) return;
             characterAnimator.runtimeAnimatorController = equippedWeapon.GetAnimatorController();
+
+            // Check if the newly equipped weapon is a melee weapon
+            equippedMeleeWeapon = equippedWeapon as MeleeWeaponBehaviour;
+
             weaponAttachmentManager = equippedWeapon.GetAttachmentManager();
             if (weaponAttachmentManager == null) return;
             equippedWeaponScope    = weaponAttachmentManager.GetEquippedScope();
@@ -178,12 +188,13 @@ namespace MyGame
         }
 
         // ── Can-do checks ────────────────────────────────────────────────────────────
-        private bool CanPlayAnimationFire()    => !(holstered || holstering || reloading || inspecting);
-        private bool CanPlayAnimationReload()  => !reloading && !inspecting;
-        private bool CanPlayAnimationHolster() => !reloading && !inspecting;
-        private bool CanChangeWeapon()         => !(holstering || reloading || inspecting);
-        private bool CanPlayAnimationInspect() => !(holstered || holstering || reloading || inspecting);
-        private bool CanAim()                  => !(holstered || inspecting || reloading || holstering);
+        private bool CanPlayAnimationFire()    => !(holstered || holstering || reloading || inspecting || meleeing || Time.time < meleeFireLockoutUntil);
+        private bool CanPlayAnimationReload()  => !reloading && !inspecting && !meleeing;
+        private bool CanPlayAnimationHolster() => !reloading && !inspecting && !meleeing;
+        private bool CanChangeWeapon()         => !(holstering || reloading || inspecting || meleeing);
+        private bool CanPlayAnimationInspect() => !(holstered || holstering || reloading || inspecting || meleeing);
+        private bool CanAim()                  => !(holstered || inspecting || reloading || holstering || meleeing);
+        private bool CanMelee()                => !(holstered || holstering || inspecting || meleeing) && equippedMeleeWeapon != null;
         private bool CanRun()                  =>
             !(inspecting || reloading || aiming || (holdingButtonFire && equippedWeapon.HasAmmunition()))
             && axisMovement.sqrMagnitude > 0.01f;
@@ -247,6 +258,37 @@ namespace MyGame
             characterAnimator.CrossFade("Inspect", 0.0f, layerActions, 0);
         }
 
+        // ── Melee ────────────────────────────────────────────────────────────────
+
+        private void PlayMeleeAnimation()
+        {
+            if (equippedMeleeWeapon == null) return;
+            if (!equippedMeleeWeapon.TryAttack()) return; // cooldown gated on the weapon
+
+            meleeing = true;
+            if (reloading) CancelReload(); // melee interrupts reload
+            characterAnimator.CrossFade("Melee Attack", 0.05f, layerActions, 0);
+        }
+
+        /// Animation event — fires at the impact frame of "Melee Attack".
+        /// Wire this in CharacterAnimationEventHandler just like FillAmmunition / EjectCasing.
+        public override void OnMeleeHit()
+        {
+            equippedMeleeWeapon?.ExecuteHit(cameraWorld.transform);
+        }
+
+        /// Animation event — fires at the very last frame of "Melee Attack".
+        public override void AnimationEndedMelee()
+        {
+            meleeing = false;
+
+            // Short lockout so the player can't immediately fire on the last frame of the swing
+            if (equippedMeleeWeapon != null)
+                meleeFireLockoutUntil = Time.time + equippedMeleeWeapon.PostMeleeLockout;
+
+            characterAnimator.CrossFade("Idle", 0.15f, layerActions, 0);
+        }
+
         private IEnumerator Equip(int index = 0)
         {
             // Cancel any reload in progress before swapping
@@ -267,6 +309,15 @@ namespace MyGame
         public void OnTryFire(InputAction.CallbackContext context)
         {
             if (!cursorLocked) return;
+
+            // If a melee weapon is equipped, fire input triggers a swing instead
+            if (equippedMeleeWeapon != null)
+            {
+                if (context.phase == InputActionPhase.Performed && CanMelee())
+                    PlayMeleeAnimation();
+                return;
+            }
+
             switch (context.phase)
             {
                 case InputActionPhase.Started:
@@ -389,6 +440,5 @@ namespace MyGame
         }
 
         public override void AnimationEndedInspect()  => inspecting  = false;
-        public override void AnimationEndedHolster()  => holstering  = false;
-    }
+        public override void AnimationEndedHolster()  => holstering  = false;    }
 }
