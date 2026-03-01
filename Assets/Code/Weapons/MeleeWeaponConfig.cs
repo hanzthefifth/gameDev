@@ -14,11 +14,19 @@ namespace MyGame
         public string displayName = "Combat Knife";
 
         [Header("Damage")]
-        [Tooltip("Damage dealt on hit.")]
-        public float damage = 45f;
+        [Tooltip("Damage dealt on hit. Set above enemy max health for instakill.")]
+        public float damage = 150f;
 
-        [Tooltip("Knockback impulse magnitude applied to hit targets.")]
+        [Header("Knockback")]
+        [Tooltip("Force applied to props and non-damageable rigidbodies.")]
         public float knockbackForce = 8f;
+
+        [Tooltip("Force applied to enemy ragdoll on the killing blow via RagdollController.ApplyImpact.")]
+        public float ragdollKillForce = 500f;
+
+        [Tooltip("Upward angle mixed into kill force so the body lifts slightly. 0 = purely forward.")]
+        [Range(0f, 0.5f)]
+        public float ragdollLiftBias = 0.25f;
 
         [Header("Hit Detection")]
         [Tooltip("Spherecast radius. Larger = more forgiving contact.")]
@@ -37,9 +45,25 @@ namespace MyGame
         [Tooltip("Seconds after the swing ends before the player can fire a ranged weapon again.")]
         public float postMeleeLockout = 0.35f;
 
+        [Header("Hit Stop")]
+        [Tooltip("Frames to freeze on a regular hit. 0 to disable.")]
+        public int hitStopFramesNormal = 3;
+
+        [Tooltip("Frames to freeze on the killing blow.")]
+        public int hitStopFramesKill = 5;
+
+        [Header("Screen Shake")]
+        public float screenShakeIntensityNormal = 0.05f;
+        public float screenShakeIntensityKill   = 0.12f;
+        public float screenShakeDuration        = 0.12f;
+
         [Header("Audio")]
         public AudioClip audioClipSwing;
         public AudioClip audioClipHit;
+        [Tooltip("Played on the killing blow. Falls back to audioClipHit if unassigned.")]
+        public AudioClip audioClipHitKill;
+        [Tooltip("Played when hitting a non-damageable prop. Falls back to audioClipHit if unassigned.")]
+        public AudioClip audioClipHitProp;
         public AudioClip audioClipHolster;
         public AudioClip audioClipUnholster;
 

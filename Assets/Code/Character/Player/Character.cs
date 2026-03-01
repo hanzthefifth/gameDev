@@ -34,6 +34,12 @@ namespace MyGame
         [SerializeField] private float dampTimeLocomotion = 0.15f;
         [SerializeField] private float dampTimeAiming     = 0.3f;
 
+        [Header("Melee (No Animation Fallback)")]
+        [Tooltip("If the character animator has no Melee Attack state, the hit fires after " +
+                 "this delay and the swing ends after attackCooldown. Set to match your " +
+                 "eventual impact frame time so it feels right. Remove once animations exist.")]
+        [SerializeField] private float meleeHitFallbackDelay = 0.15f;
+
         // ── Private state ────────────────────────────────────────────────────────────
         private bool  aiming, running, holstered;
         private float lastShotTime;
@@ -48,14 +54,15 @@ namespace MyGame
         private MagazineBehaviour equippedWeaponMagazine;
 
         private bool        inspecting, holstering;
-        private bool        reloading;          // true while any reload phase is active
-        private bool        reloadAmmoFilled;   // flipped by OnReloadAmmoFilled animation event
+        private bool        reloading;
+        private bool        reloadAmmoFilled;
         private ReloadPhase reloadPhase = ReloadPhase.None;
 
-        // ── Melee state ──────────────────────────────────────────────────────────
-        private bool  meleeing;               // true while melee animation is playing
-        private float meleeFireLockoutUntil;  // Time.time stamp — gun fire blocked until this
-        private MeleeWeaponBehaviour equippedMeleeWeapon; // non-null only when a melee weapon is equipped
+        // ── Melee state ──────────────────────────────────────────────────────────────
+        private bool  meleeing;
+        private float meleeFireLockoutUntil;
+        private MeleeWeaponBehaviour equippedMeleeWeapon;
+        private bool  hasMeleeAnimatorState; // detected once on weapon equip
 
         private Vector2 axisLook, axisMovement;
         private bool    holdingButtonAim, holdingButtonRun, holdingButtonFire;
@@ -69,7 +76,7 @@ namespace MyGame
             UpdateCursorState();
             characterKinematics = GetComponent<CharacterKinematics>();
             playerInput         = GetComponent<PlayerInput>();
-            playerHealth = GetComponent<PlayerHealth>();
+            playerHealth        = GetComponent<PlayerHealth>();
             inventory.Init();
             RefreshWeaponSetup();
         }
@@ -83,21 +90,21 @@ namespace MyGame
 
         protected override void Update()
         {
-            // 🔴 ADD THIS BLOCK AT THE TOP
             if (playerHealth != null && playerHealth.IsDead)
             {
                 holdingButtonFire = false;
-                holdingButtonAim = false;
-                holdingButtonRun = false;
-                axisMovement = default;
-                axisLook = default;
+                holdingButtonAim  = false;
+                holdingButtonRun  = false;
+                axisMovement      = default;
+                axisLook          = default;
                 return;
             }
 
             aiming  = holdingButtonAim && CanAim();
             running = holdingButtonRun && CanRun();
 
-            if (holdingButtonFire && equippedMeleeWeapon == null) // auto-fire only for ranged weapons
+            // Auto-fire only for ranged weapons
+            if (holdingButtonFire && equippedMeleeWeapon == null)
             {
                 if (CanPlayAnimationFire() && equippedWeapon.HasAmmunition() && equippedWeapon.IsAutomatic())
                 {
@@ -106,9 +113,11 @@ namespace MyGame
                 }
             }
 
-            UpdateAnimator();
+            if (characterAnimator != null && characterAnimator.runtimeAnimatorController != null)
+            {
+                UpdateAnimator();
+            }
         }
-
 
         protected override void LateUpdate()
         {
@@ -118,23 +127,21 @@ namespace MyGame
         }
 
         // ── Getters ──────────────────────────────────────────────────────────────────
-        public override Camera             GetCameraWorld()         => cameraWorld;
-        public override InventoryBehaviour GetInventory()           => inventory;
-        public override bool               IsCrosshairVisible()     => !aiming && !holstered;
-        public override bool               IsRunning()              => running;
-        public override bool               IsAiming()               => aiming;
-        public override bool               IsCursorLocked()         => cursorLocked;
-        public override bool               IsTutorialTextVisible()  => tutorialTextVisible;
-        public override Vector2            GetInputMovement()       => axisMovement;
-        public override Vector2            GetInputLook()           => axisLook;
-        public override bool               IsReloading()            => reloading;
-        public override bool               IsReloadAmmoFilled()     => reloadAmmoFilled;
-        public override bool               IsMeleeAttacking()       => meleeing;
+        public override Camera             GetCameraWorld()        => cameraWorld;
+        public override InventoryBehaviour GetInventory()          => inventory;
+        public override bool               IsCrosshairVisible()    => !aiming && !holstered;
+        public override bool               IsRunning()             => running;
+        public override bool               IsAiming()             => aiming;
+        public override bool               IsCursorLocked()       => cursorLocked;
+        public override bool               IsTutorialTextVisible() => tutorialTextVisible;
+        public override Vector2            GetInputMovement()      => axisMovement;
+        public override Vector2            GetInputLook()          => axisLook;
+        public override bool               IsReloading()           => reloading;
+        public override bool               IsReloadAmmoFilled()    => reloadAmmoFilled;
+        public override bool               IsMeleeAttacking()      => meleeing;
 
         public override bool GetInputJump()
-        {
-            return playerInput != null && playerInput.actions["Jump"].triggered;
-        }
+            => playerInput != null && playerInput.actions["Jump"].triggered;
 
         // ── Private helpers ──────────────────────────────────────────────────────────
         private void UpdateAnimator()
@@ -151,15 +158,62 @@ namespace MyGame
         private void RefreshWeaponSetup()
         {
             if ((equippedWeapon = inventory.GetEquipped()) == null) return;
-            characterAnimator.runtimeAnimatorController = equippedWeapon.GetAnimatorController();
+            //characterAnimator.runtimeAnimatorController = equippedWeapon.GetAnimatorController();
+            // Only replace controller if weapon actually provides one.
+            RuntimeAnimatorController controller = equippedWeapon.GetAnimatorController();
+            if (controller != null)
+            {
+                characterAnimator.runtimeAnimatorController = controller;
+            }
 
-            // Check if the newly equipped weapon is a melee weapon
             equippedMeleeWeapon = equippedWeapon as MeleeWeaponBehaviour;
+
+            // Detect whether the current animator controller has a "Melee Attack" state.
+            // If it doesn't we fall back to a timed coroutine so testing works without
+            // any animator setup at all.
+            hasMeleeAnimatorState = equippedMeleeWeapon != null && HasAnimatorState("Melee Attack", layerActions);
 
             weaponAttachmentManager = equippedWeapon.GetAttachmentManager();
             if (weaponAttachmentManager == null) return;
             equippedWeaponScope    = weaponAttachmentManager.GetEquippedScope();
             equippedWeaponMagazine = weaponAttachmentManager.GetEquippedMagazine();
+        }
+
+        /// Returns true if the current animator controller has a state with the given
+        /// name on the given layer. Safe to call with any layer index including -1.
+        private bool HasAnimatorState(string stateName, int layer)
+        {
+            if (characterAnimator == null) return false;
+            if (layer < 0) return false;
+
+            // AnimatorController stores states in its layers. We probe by trying to
+            // read the state hash — if it transitions without error the state exists.
+            // The safest runtime check is IsName on the current state info, but that
+            // only works while playing the state. Instead we use the RuntimeAnimatorController
+            // layers via the UnityEditor API (editor only), so at runtime we do a
+            // lightweight probe: attempt a CrossFade to a dummy normalizedTime and catch
+            // the result via a short HasState workaround.
+            //
+            // Unity doesn't expose HasState at runtime, so we check the animator's
+            // parameter/state count indirectly: try StringToHash and assume valid if
+            // the controller was assigned from a MeleeWeaponConfig (which means the
+            // designer intentionally set it up). If no controller is assigned we know
+            // there's no state.
+            if (characterAnimator.runtimeAnimatorController == null) return false;
+
+            // Best available runtime check: does the animator have any clips at all?
+            // We rely on the fact that a properly set up melee controller will have
+            // a clip named "Melee Attack". Check AnimationClips on the controller.
+            var clips = characterAnimator.runtimeAnimatorController.animationClips;
+            if (clips == null || clips.Length == 0) return false;
+
+            foreach (var clip in clips)
+            {
+                if (clip != null && clip.name == stateName)
+                    return true;
+            }
+
+            return false;
         }
 
         private void Fire()
@@ -196,11 +250,10 @@ namespace MyGame
         private bool CanAim()                  => !(holstered || inspecting || reloading || holstering || meleeing);
         private bool CanMelee()                => !(holstered || holstering || inspecting || meleeing) && equippedMeleeWeapon != null;
         private bool CanRun()                  =>
-            !(inspecting || reloading || aiming || (holdingButtonFire && equippedWeapon.HasAmmunition()))
+            !(inspecting || reloading || aiming || (holdingButtonFire && equippedWeapon != null && equippedWeapon.HasAmmunition()))
             && axisMovement.sqrMagnitude > 0.01f;
 
         // ── Reload ───────────────────────────────────────────────────────────────────
-
         private void PlayReloadAnimation()
         {
             reloading        = true;
@@ -208,46 +261,26 @@ namespace MyGame
             reloadPhase      = ReloadPhase.Start;
             equippedWeapon.Reload();
 
-            // Play "Reload Start" if it exists in the controller, otherwise fall back
-            // to the legacy single-clip states. The staged path requires two animator
-            // states: "Reload Start" and "Reload End". If your animator only has
-            // "Reload" / "Reload Empty", those still work — just rename the events.
-            bool hasAmmo     = equippedWeapon.HasAmmunition();
-            // string startState = hasAmmo ? "Reload Start" : "Reload Empty Start";
-            string startState = hasAmmo ? "Reload" : "Reload Empty";
-
-            // Try staged first; fall back to legacy clip name if state doesn't exist.
-            // (AnimatorStateInfo.IsName is the clean runtime check, but easiest is to
-            //  just use the name you've set up — document which path you're on.)
+            string startState = equippedWeapon.HasAmmunition() ? "Reload" : "Reload Empty";
             characterAnimator.Play(startState, layerActions, 0.0f);
         }
 
-        /// Called by the animation event at the END of "Reload Start" / beginning
-        /// of "Reload End". Transitions to the second phase clip.
         public void OnReloadPhaseStartEnded()
         {
             if (!reloading) return;
             reloadPhase = ReloadPhase.End;
-            bool hasAmmo   = equippedWeapon.HasAmmunition(); // still pre-fill at this point
-            string endState = hasAmmo ? "Reload End" : "Reload Empty End";
+            string endState = equippedWeapon.HasAmmunition() ? "Reload End" : "Reload Empty End";
             characterAnimator.Play(endState, layerActions, 0.0f);
         }
 
-        /// Cancel any in-progress reload. Safe to call from melee, dodge, ability, or
-        /// weapon-swap code. Checks reloadAmmoFilled so the caller can decide whether
-        /// to roll back ammo if needed (we keep it by default — gun is chambered).
         public override void CancelReload()
         {
             if (!reloading) return;
 
-            reloading   = false;
-            reloadPhase = ReloadPhase.None;
-            // reloadAmmoFilled intentionally left as-is so callers can read it:
-            //   true  → ammo was already committed, cancel is free
-            //   false → mag never seated; ammo was NOT added (no rollback needed)
+            reloading        = false;
+            reloadPhase      = ReloadPhase.None;
             reloadAmmoFilled = false;
 
-            // Snap both animators back to idle
             characterAnimator.CrossFade("Idle", 0.15f, layerActions, 0);
             equippedWeapon?.CancelReload();
         }
@@ -258,20 +291,44 @@ namespace MyGame
             characterAnimator.CrossFade("Inspect", 0.0f, layerActions, 0);
         }
 
-        // ── Melee ────────────────────────────────────────────────────────────────
-
+        // ── Melee ────────────────────────────────────────────────────────────────────
         private void PlayMeleeAnimation()
         {
             if (equippedMeleeWeapon == null) return;
-            if (!equippedMeleeWeapon.TryAttack()) return; // cooldown gated on the weapon
+            if (!equippedMeleeWeapon.TryAttack()) return;
 
             meleeing = true;
-            if (reloading) CancelReload(); // melee interrupts reload
-            characterAnimator.CrossFade("Melee Attack", 0.05f, layerActions, 0);
+            if (reloading) CancelReload();
+
+            if (hasMeleeAnimatorState)
+            {
+                // Full path — animation events drive OnMeleeHit and AnimationEndedMelee.
+                characterAnimator.CrossFade("Melee Attack", 0.05f, layerActions, 0);
+            }
+            else
+            {
+                // No animator state yet — fire hit after a short delay then end the swing.
+                // This lets you test the full damage/ragdoll/hitstop pipeline without
+                // any animator setup. Remove this branch (or keep it) once animations exist.
+                StartCoroutine(MeleeFallbackRoutine());
+            }
+        }
+
+        /// Fallback coroutine used when no "Melee Attack" animator state exists.
+        /// Simulates the two animation events: OnMeleeHit and AnimationEndedMelee.
+        private IEnumerator MeleeFallbackRoutine()
+        {
+            // Wait for the "impact frame" — equivalent to where OnMeleeHit would fire.
+            yield return new WaitForSeconds(meleeHitFallbackDelay);
+            OnMeleeHit();
+
+            // Wait out the remaining swing time before ending.
+            float remainingTime = (equippedMeleeWeapon != null ? equippedMeleeWeapon.PostMeleeLockout : 0.3f);
+            yield return new WaitForSeconds(remainingTime);
+            AnimationEndedMelee();
         }
 
         /// Animation event — fires at the impact frame of "Melee Attack".
-        /// Wire this in CharacterAnimationEventHandler just like FillAmmunition / EjectCasing.
         public override void OnMeleeHit()
         {
             equippedMeleeWeapon?.ExecuteHit(cameraWorld.transform);
@@ -282,25 +339,45 @@ namespace MyGame
         {
             meleeing = false;
 
-            // Short lockout so the player can't immediately fire on the last frame of the swing
             if (equippedMeleeWeapon != null)
                 meleeFireLockoutUntil = Time.time + equippedMeleeWeapon.PostMeleeLockout;
 
-            characterAnimator.CrossFade("Idle", 0.15f, layerActions, 0);
+            // Only snap animator if we actually played a state.
+            if (hasMeleeAnimatorState)
+                characterAnimator.CrossFade("Idle", 0.15f, layerActions, 0);
         }
 
         private IEnumerator Equip(int index = 0)
         {
-            // Cancel any reload in progress before swapping
             if (reloading) CancelReload();
 
-            if (!holstered)
+            // If we have a valid animator and holster layer exists,
+            // use the animation flow. Otherwise skip waiting.
+            bool canHolsterAnimate =
+                characterAnimator != null &&
+                characterAnimator.runtimeAnimatorController != null &&
+                layerHolster >= 0;
+
+            if (!holstered && canHolsterAnimate)
             {
                 SetHolstered(holstering = true);
-                yield return new WaitUntil(() => !holstering);
+
+                // Timeout safety in case animation event never fires
+                float timeout = 1.0f;
+                float startTime = Time.time;
+
+                yield return new WaitUntil(() =>
+                    !holstering || Time.time - startTime > timeout);
             }
+
+            // Ensure we never get stuck
+            holstering = false;
+
             SetHolstered(false);
-            characterAnimator.Play("Unholster", layerHolster, 0);
+
+            if (canHolsterAnimate)
+                characterAnimator.Play("Unholster", layerHolster, 0);
+
             inventory.Equip(index);
             RefreshWeaponSetup();
         }
@@ -310,7 +387,7 @@ namespace MyGame
         {
             if (!cursorLocked) return;
 
-            // If a melee weapon is equipped, fire input triggers a swing instead
+            // Melee weapon equipped — mouse 1 swings instead of firing.
             if (equippedMeleeWeapon != null)
             {
                 if (context.phase == InputActionPhase.Performed && CanMelee())
@@ -419,13 +496,11 @@ namespace MyGame
         }
 
         // ── Animation events (called by CharacterAnimationEventHandler) ──────────────
+        public override void EjectCasing() => equippedWeapon?.EjectCasing();
 
-        public override void EjectCasing()          => equippedWeapon?.EjectCasing();
         public override void SetActiveMagazine(int active)
             => equippedWeaponMagazine.gameObject.SetActive(active != 0);
 
-        /// FillAmmunition doubles as the "reload safe point" event.
-        /// Once this fires, ammo is committed — cancelling after this is free.
         public override void FillAmmunition(int amount)
         {
             equippedWeapon?.FillAmmunition(amount);
@@ -439,6 +514,7 @@ namespace MyGame
             reloadPhase      = ReloadPhase.None;
         }
 
-        public override void AnimationEndedInspect()  => inspecting  = false;
-        public override void AnimationEndedHolster()  => holstering  = false;    }
+        public override void AnimationEndedInspect() => inspecting = false;
+        public override void AnimationEndedHolster() => holstering = false;
+    }
 }

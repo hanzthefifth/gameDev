@@ -32,23 +32,10 @@ namespace MyGame
         #endregion
         
         #region FIELDS
-        
-        
-        /// Player Character.
-        
+ 
         private CharacterBehaviour playerCharacter;
-        
-        /// The player character's rigidbody component.
-        
         private Rigidbody playerCharacterRigidbody;
-
-        
-        /// The player character's rotation.
-        
         private Quaternion rotationCharacter;
-        
-        /// The camera's rotation.
-        
         private Quaternion rotationCamera;
 
         #endregion

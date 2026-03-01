@@ -75,11 +75,13 @@
     <Compile Include="Assets\Code\Tools\Looping\Loops.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
     <Compile Include="Assets\Code\Weapons\MeleeWeapon.cs" />
+    <Compile Include="Assets\Code\Weapons\CameraShake.cs" />
     <Compile Include="Assets\Code\Weapons\Scope.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\Code\Audio\SoundManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
     <Compile Include="Assets\Code\Weapons\MeleeWeaponConfig.cs" />
+    <Compile Include="Assets\Art\Animations\Kevin Iglesias\Human Animations\Scripts\SpineProxy.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Assets\Code\Tools\Looping\Log.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
     <Compile Include="Assets\Code\Interface\HealthUI.cs" />
+    <Compile Include="Assets\Code\Weapons\Hitstop.cs" />
     <Compile Include="Assets\Code\Character\Player\DebugDamageTester.cs" />
     <Compile Include="Assets\Code\Weapons\Muzzle.cs" />
     <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\PerceptionSystem.cs" />
@@ -125,7 +128,6 @@
     <Compile Include="Assets\Code\Character\Enemy\ClickMove.cs" />
     <Compile Include="Assets\Code\Character\Enemy\EnemyAITest\RoleProfile.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
-    <Compile Include="Assets\Animations\Kevin Iglesias\Human Animations\Scripts\SpineProxy.cs" />
     <Compile Include="Assets\Code\Interface\StaminaUI.cs" />
     <Compile Include="Assets\Code\Interface\Element.cs" />
     <Compile Include="Assets\Code\Services\AudioManagerService.cs" />

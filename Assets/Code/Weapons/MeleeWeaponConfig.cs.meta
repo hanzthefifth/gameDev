@@ -1,2 +1,18 @@
 fileFormatVersion: 2
 guid: 3d6271f5fd57d7c48880b52c21faaa51
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - audioClipSwing: {fileID: 8300000, guid: c81ea5bb59c77414ebf5e86422a1c9a3, type: 3}
+  - audioClipHit: {instanceID: 0}
+  - audioClipHitKill: {instanceID: 0}
+  - audioClipHitProp: {instanceID: 0}
+  - audioClipHolster: {instanceID: 0}
+  - audioClipUnholster: {instanceID: 0}
+  - animatorController: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

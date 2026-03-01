@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: AssualtRifle
   baseDamage: 100
   damageType: 0
-  impactForce: 0.2
+  impactForce: 0
   maxDistance: 500
   gunshotSoundIntensity: 10
   gunshotSoundRange: 30

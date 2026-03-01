@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d6271f5fd57d7c48880b52c21faaa51, type: 3}
+  m_Name: KnifeConfig
+  m_EditorClassIdentifier: Assembly-CSharp::MyGame.MeleeWeaponConfig
+  displayName: Knife
+  damage: 50
+  knockbackForce: 8
+  ragdollKillForce: 500
+  ragdollLiftBias: 0.25
+  hitRadius: 0.35
+  hitRange: 1.8
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  attackCooldown: 0.55
+  postMeleeLockout: 0.35
+  hitStopFramesNormal: 3
+  hitStopFramesKill: 5
+  screenShakeIntensityNormal: 0.05
+  screenShakeIntensityKill: 0.12
+  screenShakeDuration: 0.12
+  audioClipSwing: {fileID: 8300000, guid: c81ea5bb59c77414ebf5e86422a1c9a3, type: 3}
+  audioClipHit: {fileID: 0}
+  audioClipHitKill: {fileID: 0}
+  audioClipHitProp: {fileID: 0}
+  audioClipHolster: {fileID: 0}
+  audioClipUnholster: {fileID: 0}
+  animatorController: {fileID: 0}

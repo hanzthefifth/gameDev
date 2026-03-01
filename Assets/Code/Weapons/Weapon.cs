@@ -27,8 +27,6 @@ namespace MyGame
         [Header("Damage")]
         [Tooltip("Damage per hit. Overridden by WeaponConfig if assigned.")]
         [SerializeField] private float damage = 20f;
-        [Tooltip("Impact force on rigidbodies. Overridden by WeaponConfig if assigned.")]
-        [SerializeField] private float impactForce = 5f;
 
         [Header("AI Hearing")]
         [Tooltip("Gunshot loudness for AI (0–1).")]
@@ -94,13 +92,12 @@ namespace MyGame
             if (weaponConfig != null)
             {
                 damage               = weaponConfig.baseDamage;
-                impactForce          = weaponConfig.impactForce;
                 maximumDistance      = weaponConfig.maxDistance;
                 gunshotSoundIntensity = weaponConfig.gunshotSoundIntensity;
                 gunshotSoundRange    = weaponConfig.gunshotSoundRange;
 
                 Debug.Log($"[Weapon] {name} using WeaponConfig '{weaponConfig.displayName}' " +
-                          $"(damage={damage}, force={impactForce}, maxDist={maximumDistance}, " +
+                          $"(damage={damage}, maxDist={maximumDistance}, " +
                           $"soundIntensity={gunshotSoundIntensity}, soundRange={gunshotSoundRange})");
             }
 
@@ -149,13 +146,9 @@ namespace MyGame
         public override void Reload()
         {
             if (animator == null) return;
-            // Play the weapon-side reload animation. For staged reloads the weapon
-            // animator can also split into "Reload Start" / "Reload End" to match the
-            // character animator, but a single clip is fine if the mechanics look right.
             animator.Play(HasAmmunition() ? "Reload" : "Reload Empty", 0, 0.0f);
         }
 
-        /// Snap the weapon animator back to idle. Called by Character.CancelReload().
         public override void CancelReload()
         {
             if (animator == null) return;
@@ -195,31 +188,21 @@ namespace MyGame
                 projectile.transform.forward * projectileImpulse;
         }
 
-        
         private void ApplyDamage(RaycastHit hit)
         {
             IDamageable damageable = hit.collider.GetComponentInParent<IDamageable>();
 
             if (damageable != null)
             {
-                Vector3 directionWorld = playerCamera.forward;
-                Vector3 force = directionWorld.normalized * impactForce;
+                // Skip damage on already-dead enemies — projectile physics handles
+                // moving the ragdoll, no need to route through the damage pipeline.
+                if (damageable.IsDead) return;
 
-                damageable.TakeDamage(damage, force, hit.point, hit.rigidbody);
+                damageable.TakeDamage(damage);
 
                 CombatAI enemyAI = hit.collider.GetComponentInParent<CombatAI>();
                 if (enemyAI != null)
                     enemyAI.OnTakeDamage(damage, transform.position, transform);
-            }
-
-            // Only push non-characters
-            if (hit.rigidbody != null && damageable == null)
-            {
-                hit.rigidbody.AddForceAtPosition(
-                    playerCamera.forward * impactForce,
-                    hit.point,
-                    ForceMode.Impulse
-                );
             }
         }
 

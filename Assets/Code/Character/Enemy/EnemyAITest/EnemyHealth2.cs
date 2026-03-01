@@ -15,12 +15,6 @@ public class EnemyHealth2 : MonoBehaviour, IDamageable
     [Header("Death Physics")]
     [SerializeField] private RagdollController ragdollController;
 
-    // Cached from the most recent bullet hit.
-    private bool      hasCachedImpact;
-    private Vector3   cachedForce;       // raw playerCamera.forward * impactForce from weapon
-    private Vector3   cachedImpactPoint;
-    private Rigidbody cachedImpactBody;  // the specific bone rigidbody that was struck
-
     private float currentHealth;
     private bool  isDead;
 
@@ -59,17 +53,6 @@ public class EnemyHealth2 : MonoBehaviour, IDamageable
         if (currentHealth <= 0f) Die();
     }
 
-    public void TakeDamage(float amount, Vector3 force, Vector3 hitPoint, Rigidbody hitBody = null)
-    {
-        // Always update so the killing shot drives the ragdoll, not an earlier hit.
-        hasCachedImpact  = true;
-        cachedForce      = force;      // direction * weapon impactForce, passed straight through
-        cachedImpactPoint = hitPoint;
-        cachedImpactBody  = hitBody;   // bone rigidbody the raycast landed on
-
-        TakeDamage(amount);
-    }
-
     // -------------------------------------------------------------------------
     private void Die()
     {
@@ -83,13 +66,10 @@ public class EnemyHealth2 : MonoBehaviour, IDamageable
         if (perception   != null) perception.enabled   = false;
         if (role         != null) role.enabled         = false;
 
+        // Projectile physics handles ragdoll movement on ranged hits.
+        // EnableRagdoll() just releases the bones — no impulse needed here.
         if (ragdollController != null)
-        {
             ragdollController.EnableRagdoll();
-
-            if (hasCachedImpact)
-                ragdollController.ApplyImpact(cachedForce, cachedImpactPoint, cachedImpactBody);
-        }
 
         if (deathEffectPrefab != null)
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);

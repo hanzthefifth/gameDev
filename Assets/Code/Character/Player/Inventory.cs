@@ -37,6 +37,7 @@ namespace MyGame
 
             //Equip.
             Equip(equippedAtStart);
+            Debug.Log("Weapons found: " + weapons.Length);
         }
 
         public override WeaponBehaviour Equip(int index)

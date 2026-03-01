@@ -15,12 +15,10 @@ namespace MyGame
         public float baseDamage = 100f;
         public DamageType damageType = DamageType.Bullet;
 
-        [Tooltip("Force applied to rigidbodies when hit.")]
-        public float impactForce = 5f;
-
         [Header("Range")]
         [Tooltip("Maximum distance for accurate hitscan.")]
         public float maxDistance = 500f;
+
         [Header("Sound")]
         public float gunshotSoundIntensity = 1f;
         public float gunshotSoundRange = 45f;

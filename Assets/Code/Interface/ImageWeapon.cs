@@ -30,9 +30,7 @@ namespace MyGame.Interface
 
         #region FIELDS
 
-        
         /// Weapon Attachment Manager.
-        
         private WeaponAttachmentManagerBehaviour attachmentManagerBehaviour;
 
         #endregion
@@ -41,39 +39,55 @@ namespace MyGame.Interface
 
         protected override void Tick()
         {
-            //Get Attachment Manager.
-            attachmentManagerBehaviour = equippedWeapon.GetAttachmentManager();
-            //Update the weapon's body sprite!
+            // If no weapon is equipped, hide everything safely.
+            if (equippedWeapon == null)
+            {
+                AssignSprite(imageWeaponBody, null, true);
+                AssignSprite(imageWeaponScopeDefault, null, true);
+                AssignSprite(imageWeaponMagazine, null, true);
+                return;
+            }
+
+            // Update weapon body sprite safely.
             imageWeaponBody.sprite = equippedWeapon.GetSpriteBody();
 
-            //Sprite.
-            Sprite sprite = default;
+            // Get attachment manager (may be null for melee weapons).
+            attachmentManagerBehaviour = equippedWeapon.GetAttachmentManager();
 
-            //Scope Default.
+            // If no attachment manager (melee weapon), hide scope and magazine UI.
+            if (attachmentManagerBehaviour == null)
+            {
+                AssignSprite(imageWeaponScopeDefault, null, true);
+                AssignSprite(imageWeaponMagazine, null, true);
+                return;
+            }
+
+            // Sprite temp variable.
+            Sprite sprite = null;
+
+            // Scope Default.
             ScopeBehaviour scopeDefaultBehaviour = attachmentManagerBehaviour.GetEquippedScopeDefault();
-            //Get Sprite.
             if (scopeDefaultBehaviour != null)
                 sprite = scopeDefaultBehaviour.GetSprite();
-            //Assign Sprite!
+
             AssignSprite(imageWeaponScopeDefault, sprite, scopeDefaultBehaviour == null);
 
-            //Magazine.
+            // Magazine.
             MagazineBehaviour magazineBehaviour = attachmentManagerBehaviour.GetEquippedMagazine();
-            //Get Sprite.
+            sprite = null;
+
             if (magazineBehaviour != null)
                 sprite = magazineBehaviour.GetSprite();
-            //Assign Sprite!
+
             AssignSprite(imageWeaponMagazine, sprite, magazineBehaviour == null);
         }
 
-        
         /// Assigns a sprite to an image.
-        
         private static void AssignSprite(Image image, Sprite sprite, bool forceHide = false)
         {
-            //Update.
+            if (image == null) return;
+
             image.sprite = sprite;
-            //Disable image if needed.
             image.enabled = sprite != null && !forceHide;
         }
 

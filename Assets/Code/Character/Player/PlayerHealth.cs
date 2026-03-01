@@ -13,11 +13,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public float CurrentHealth { get; private set; }
     public bool IsDead { get; private set; }
 
-    // Events
-    // normalized = 0..1
     public event Action<float> OnHealthNormalizedChanged;
-    public event Action<float, float> OnHealthChanged; // current, max
-    public event Action<float> OnDamaged;              // damage amount
+    public event Action<float, float> OnHealthChanged;
+    public event Action<float> OnDamaged;
     public event Action OnDeath;
 
     private float _lastDamageTime;
@@ -31,19 +29,15 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        if (!regenEnabled || IsDead) return; //dont regen if dead
+        if (!regenEnabled || IsDead) return;
 
-        // Simple delayed regen
         if (Time.time - _lastDamageTime >= regenDelay && CurrentHealth < maxHealth)
         {
             float old = CurrentHealth;
             CurrentHealth = Mathf.Min(maxHealth, CurrentHealth + regenPerSecond * Time.deltaTime);
 
             if (!Mathf.Approximately(CurrentHealth, old))
-            {
-                //Debug.Log($"[PlayerHealth] Regenerating: {CurrentHealth:F1}/{maxHealth}");
                 NotifyHealthChanged();
-            }
         }
     }
 
@@ -51,8 +45,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         if (IsDead || amount <= 0f)
         {
-            if (IsDead)
-                Debug.LogWarning("[PlayerHealth] Cannot take damage - already dead!");
+            if (IsDead) Debug.LogWarning("[PlayerHealth] Cannot take damage - already dead!");
             return;
         }
 
@@ -62,7 +55,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
 
         Debug.Log($"[PlayerHealth] Took {amount} damage. {old:F1} → {CurrentHealth:F1}");
-        
+
         OnDamaged?.Invoke(amount);
 
         if (!Mathf.Approximately(CurrentHealth, old))
@@ -72,19 +65,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             Die();
     }
 
-    //i guess we just implement the interface like this for now
-    public void TakeDamage(float amount, Vector3 force, Vector3 hitPoint, Rigidbody hitBody = null)
-    {
-        // Player currently ignores hit context.
-        TakeDamage(amount);
-    }
-
     public void Heal(float amount)
     {
         if (IsDead || amount <= 0f)
         {
-            if (IsDead)
-                Debug.LogWarning("[PlayerHealth] Cannot heal - player is dead!");
+            if (IsDead) Debug.LogWarning("[PlayerHealth] Cannot heal - player is dead!");
             return;
         }
 
@@ -101,7 +86,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void Kill()
     {
         if (IsDead) return;
-        
+
         Debug.Log("[PlayerHealth] Player killed!");
         CurrentHealth = 0f;
         NotifyHealthChanged();
@@ -123,15 +108,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         IsDead = true;
         Debug.Log("[PlayerHealth] Player died!");
         OnDeath?.Invoke();
-        // You can hook your death logic elsewhere (disable input, play anim, reload level, etc.)
     }
 
     private void NotifyHealthChanged()
     {
-        float normalized = maxHealth > 0f ? (CurrentHealth / maxHealth) : 0f; //divide by zero edge case
-        
-       // Debug.Log($"[PlayerHealth] Notifying listeners - Health: {CurrentHealth:F1}/{maxHealth} (normalized: {normalized:F2})");
-        
+        float normalized = maxHealth > 0f ? (CurrentHealth / maxHealth) : 0f;
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         OnHealthNormalizedChanged?.Invoke(normalized);
     }
